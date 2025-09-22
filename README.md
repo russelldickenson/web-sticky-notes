@@ -1,93 +1,151 @@
-# sticky-notes
+# Sticky Notes App
 
+A simple, web-based sticky notes application that allows you to create, edit, and organize digital notes with Markdown-style formatting support.
 
+Suitable only for desktop browsers.
+
+## Features
+
+- Create draggable and resizable sticky notes
+- Markdown-style text formatting
+- Interactive checkboxes for task lists
+- Customizable app title
+- Automatic saving to browser storage
+- Clean, intuitive interface
 
 ## Getting started
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+Open the HTML file in any modern web browser to start using the app. No installation or setup required.
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+## How to use
 
-## Add your files
+### Creating notes
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
+- Click the **+** button in the top-right corner to create a new sticky note
+- New notes appear with default text that you can immediately edit
+
+### Editing notes
+
+- **Single-click** anywhere in a note's text area to enter edit mode
+- The note will show a distinct shadow when in edit mode
+- **Ctrl+Enter** (Windows/Linux) or **Cmd+Enter** (Mac) to save and exit edit mode
+- **Click outside** the note to automatically save and exit edit mode
+
+### Moving and resizing notes
+
+- **Drag** the yellow header bar to move notes around the canvas
+- **Drag** the small resize handle in the bottom-right corner to resize notes
+- Notes automatically come to the front when clicked
+
+### Deleting notes
+
+- Hover over a note to reveal the **×** button in the top-right corner
+- Click the **×** button and confirm deletion in the dialog
+
+### Customizing the app
+
+- Click the **settings** button (gear icon) in the top-left corner to change the app title
+
+## Markdown-style formatting
+
+The app supports several Markdown-style formatting options:
+
+### Text Formatting
+
+- **Bold text**: Wrap text in double asterisks `**bold text**`
+- **Monospace text**: Wrap text in backticks `` `code text` ``
+
+### Interactive Checkboxes
+
+Create task lists with clickable checkboxes:
+
+- **Unchecked**: `- [ ] Task to do`
+- **Checked**: `- [x] Completed task`
+
+Checkboxes can be toggled by clicking them in view mode.
+
+### Example note content
 
 ```
-cd existing_repo
-git remote add origin https://gitlab.com/russelldickenson/sticky-notes.git
-git branch -M main
-git push -uf origin main
+**My Task List**
+
+- [ ] Buy groceries
+- [x] Walk the dog
+- [ ] Review `project.js` code
+
+Use **bold** for emphasis and `backticks` for code.
 ```
 
-## Integrate with your tools
+## Data Storage
 
-- [ ] [Set up project integrations](https://gitlab.com/russelldickenson/sticky-notes/-/settings/integrations)
+### Automatic Saving
 
-## Collaborate with your team
+- All notes are automatically saved as you create, edit, move, or resize them
+- No manual save action is required
+- Changes are saved instantly when exiting edit mode
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)
+### Storage Location
 
-## Test and Deploy
+⚠️ **Important**: All note content is stored in your browser's localStorage. This means:
 
-Use the built-in continuous integration in GitLab.
+- Notes are only available in the specific browser where they were created
+- **Notes will be permanently lost if you clear your browser's data/cache**
+- Notes are not synchronized across different browsers or devices
+- Consider backing up important notes by copying the text elsewhere
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+### Backup Recommendations
 
-***
+For important notes, consider:
+- Copying text to a separate document
+- Taking screenshots
 
-# Editing this README
+## Browser compatibility
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+This app works in all modern web browsers that support:
+- HTML5
+- CSS3
+- ES6 JavaScript
+- localStorage API
 
-## Suggestions for a good README
+## Technical Details
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-Choose a self-explaining name for your project.
-
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
-
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
-
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+- **Single-file application**: Everything contained in one HTML file
+- **No external dependencies**: Works offline without internet connection
+- **Responsive design**: Adapts to different screen sizes
+- **Cross-platform**: Works on Windows, Mac, Linux, and mobile devices
 
 ## License
-For open source projects, say how it is licensed.
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+This project is licensed under the GNU General Public License v3.0 (GPL-3.0).
+
+## Development
+
+This application was created using AI assistance to demonstrate modern web development practices including:
+- CSS custom properties for theming
+- Template-based DOM manipulation
+- Event delegation and optimization
+- Progressive enhancement techniques
+
+## Contributing
+
+Contributions are welcome! Please ensure any changes maintain compatibility with the GPL-3.0 license.
+
+## Troubleshooting
+
+### Notes not saving
+- Ensure JavaScript is enabled in your browser
+- Check that localStorage is available (not in private/incognito mode)
+- Verify sufficient storage space is available
+
+### Performance issues
+- Consider reducing the number of notes if performance degrades
+- Close and reopen the browser if memory usage seems high
+
+### Formatting not working
+- Ensure you're using the correct Markdown syntax
+- Double-check that text is properly wrapped in formatting characters
+- Try refreshing the page if formatting appears broken
+
+---
+
+*Last updated: 2025*
