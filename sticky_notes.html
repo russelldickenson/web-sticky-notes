@@ -284,7 +284,7 @@
       border: none;
       border-radius: var(--border-radius-sm);
       cursor: pointer;
-      font-weight: bold;
+      font-weight: normal;
     }
 
     .dialog-btn.yes {
@@ -669,8 +669,10 @@
       function createNewNote() {
         const x = 20 + Math.random() * 50;
         const y = 20 + Math.random() * 50;
-        const note = createNote('New note...', x, y);
+        const note = createNote('', x, y);
         bringToFront(note);
+        // Enter edit mode immediately with cursor at the start
+        enterEditMode(note, 0, 0);
       }
 
       addNoteBtn.addEventListener('click', function () {
