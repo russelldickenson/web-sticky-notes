@@ -5,6 +5,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sticky Notes App</title>
+  <link rel="icon" type="image/svg+xml"
+    href="data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzIgMzIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPCEtLSBOb3RlIGJvZHkgLS0+CiAgPHJlY3QgeD0iMiIgeT0iNCIgd2lkdGg9IjI4IiBoZWlnaHQ9IjI0IiByeD0iMiIgZmlsbD0iI2ZmZmFjZCIvPgogIAogIDwhLS0gTm90ZSBoZWFkZXIgLS0+CiAgPHJlY3QgeD0iMiIgeT0iNCIgd2lkdGg9IjI4IiBoZWlnaHQ9IjciIHJ4PSIyIiBmaWxsPSIjZjlkNzFjIi8+CiAgPHJlY3QgeD0iMiIgeT0iOSIgd2lkdGg9IjI4IiBoZWlnaHQ9IjIiIGZpbGw9IiNmOWQ3MWMiLz4KICAKICA8IS0tIFN1YnRsZSBzaGFkb3cgLS0+CiAgPHJlY3QgeD0iMi41IiB5PSI0LjUiIHdpZHRoPSIyOCIgaGVpZ2h0PSIyNCIgcng9IjIiIGZpbGw9InJnYmEoMCwwLDAsMC4wOCkiIHN0eWxlPSJtaXgtYmxlbmQtbW9kZTogbXVsdGlwbHk7Ii8+CiAgCiAgPCEtLSBEYXJrIGVkZ2VzIG9uIGJvdHRvbSBhbmQgcmlnaHQgLS0+CiAgPHJlY3QgeD0iMjkiIHk9IjUiIHdpZHRoPSIxIiBoZWlnaHQ9IjIzIiBmaWxsPSJyZ2JhKDAsMCwwLDAuNCkiLz4KICA8cmVjdCB4PSIzIiB5PSIyNyIgd2lkdGg9IjI2IiBoZWlnaHQ9IjEiIGZpbGw9InJnYmEoMCwwLDAsMC40KSIvPgo8L3N2Zz4=">
   <style>
     :root {
       --color-primary: #4CAF50;
@@ -40,7 +42,7 @@
       --spacing-xl: 20px;
       --spacing-xxl: 25px;
       --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
-      --font-family-mono: 'Courier New', Courier, monospace;
+      --font-family-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'Courier New', Courier, monospace;
       --transition: 0.2s;
     }
 
@@ -63,75 +65,38 @@
       height: 100vh;
     }
 
-    .header {
-      background-color: var(--color-header);
-      color: var(--color-text);
-      padding: var(--spacing-lg) var(--spacing-xl);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16);
-      position: relative;
-      border-bottom: 1px solid var(--color-border);
-    }
-
-    .header h1 {
-      font-size: 1.8rem;
-      font-weight: 600;
-      text-align: center;
-    }
-
-    .settings-btn,
-    .add-note-btn {
-      border: none;
-      width: 40px;
-      height: 40px;
-      border-radius: var(--border-radius);
-      cursor: pointer;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      position: absolute;
-      transition: background-color var(--transition), transform var(--transition);
-      box-shadow: var(--shadow-light);
-    }
-
-    .settings-btn {
-      background-color: var(--color-secondary);
-      color: var(--color-white);
-      left: var(--spacing-xl);
-    }
-
-    .settings-btn:hover {
-      background-color: var(--color-secondary-hover);
-      transform: scale(1.05);
-    }
-
-    .settings-btn svg {
-      width: 22px;
-      height: 22px;
-      fill: var(--color-white);
-    }
-
-    .add-note-btn {
-      background-color: var(--color-primary);
-      color: var(--color-white);
-      font-weight: bold;
-      font-size: 24px;
-      right: var(--spacing-xl);
-    }
-
-    .add-note-btn:hover {
-      background-color: var(--color-primary-hover);
-      transform: scale(1.05);
-    }
-
     .canvas {
       flex: 1;
       position: relative;
       overflow: hidden;
       padding: var(--spacing-xl);
       background-color: var(--color-canvas);
+    }
+
+    .add-note-btn {
+      position: fixed;
+      top: var(--spacing-xl);
+      right: var(--spacing-xl);
+      width: 40px;
+      height: 40px;
+      background-color: var(--color-primary);
+      color: var(--color-white);
+      border: none;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: background-color var(--transition), transform var(--transition);
+      box-shadow: var(--shadow-light);
+      z-index: 100;
+    }
+
+    .add-note-btn:hover {
+      background-color: var(--color-primary-hover);
+      transform: scale(1.05);
     }
 
     .sticky-note {
@@ -233,7 +198,7 @@
     }
 
     .note-content code {
-      background-color: var(--color-code-bg);
+      background-color: transparent;
       padding: var(--spacing-xs) 5px;
       border-radius: var(--border-radius-sm);
       font-family: var(--font-family-mono);
@@ -280,8 +245,7 @@
       cursor: nwse-resize;
     }
 
-    .confirmation-dialog,
-    .settings-dialog {
+    .confirmation-dialog {
       position: fixed;
       top: 0;
       left: 0;
@@ -295,33 +259,18 @@
       display: none;
     }
 
-    .dialog-content,
-    .settings-content {
+    .dialog-content {
       background-color: var(--color-white);
       padding: var(--spacing-xl);
       border-radius: var(--border-radius);
       box-shadow: var(--shadow-dialog);
       text-align: center;
-    }
-
-    .dialog-content {
       width: 300px;
-    }
-
-    .settings-content {
-      width: 350px;
-      padding: var(--spacing-xxl);
     }
 
     .dialog-content p {
       margin-bottom: var(--spacing-xl);
       font-size: 16px;
-    }
-
-    .settings-content h2 {
-      margin-bottom: var(--spacing-xl);
-      text-align: center;
-      color: var(--color-text);
     }
 
     .dialog-buttons {
@@ -330,13 +279,7 @@
       gap: var(--spacing-lg);
     }
 
-    .settings-buttons {
-      display: flex;
-      justify-content: flex-end;
-    }
-
-    .dialog-btn,
-    .settings-btn-close {
+    .dialog-btn {
       padding: var(--spacing-sm) var(--spacing-xl);
       border: none;
       border-radius: var(--border-radius-sm);
@@ -359,49 +302,15 @@
       color: var(--color-white);
     }
 
-    .dialog-btn.no:hover,
-    .settings-btn-close:hover {
+    .dialog-btn.no:hover {
       background-color: var(--color-secondary-hover);
-    }
-
-    .settings-btn-close {
-      padding: 10px var(--spacing-xl);
-    }
-
-    .settings-group {
-      margin-bottom: var(--spacing-xl);
-    }
-
-    .settings-group label {
-      display: block;
-      margin-bottom: var(--spacing-sm);
-      font-weight: bold;
-      color: var(--color-text);
-    }
-
-    .settings-group input {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #ced4da;
-      border-radius: var(--border-radius-sm);
-      font-size: 16px;
-      background-color: var(--color-canvas);
     }
   </style>
 </head>
 
 <body>
   <div class="app-container">
-    <div class="header">
-      <button class="settings-btn" id="settingsBtn">
-        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path
-            d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z" />
-        </svg>
-      </button>
-      <h1 id="appTitle">Sticky Notes</h1>
-      <button class="add-note-btn" id="addNoteBtn">+</button>
-    </div>
+    <button class="add-note-btn" id="addNoteBtn">+</button>
     <div class="canvas" id="notesCanvas"></div>
   </div>
 
@@ -415,35 +324,17 @@
     </div>
   </div>
 
-  <div class="settings-dialog" id="settingsDialog">
-    <div class="settings-content">
-      <h2>Settings</h2>
-      <div class="settings-group">
-        <label for="appTitleInput">Title</label>
-        <input type="text" id="appTitleInput" placeholder="Enter app title">
-      </div>
-      <div class="settings-buttons">
-        <button class="settings-btn-close" id="settingsCloseBtn">Close</button>
-      </div>
-    </div>
-  </div>
-
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       const notesCanvas = document.getElementById('notesCanvas');
       const addNoteBtn = document.getElementById('addNoteBtn');
-      const settingsBtn = document.getElementById('settingsBtn');
-      const appTitle = document.getElementById('appTitle');
       const confirmationDialog = document.getElementById('confirmationDialog');
       const confirmYesBtn = document.getElementById('confirmYes');
       const confirmNoBtn = document.getElementById('confirmNo');
-      const settingsDialog = document.getElementById('settingsDialog');
-      const appTitleInput = document.getElementById('appTitleInput');
-      const settingsCloseBtn = document.getElementById('settingsCloseBtn');
 
       // Constants
-      const MIN_NOTE_WIDTH = 150;
-      const MIN_NOTE_HEIGHT = 120;
+      const MIN_NOTE_WIDTH = 220;
+      const MIN_NOTE_HEIGHT = 200;
       const DEFAULT_NOTE_WIDTH = 200;
       const DEFAULT_NOTE_HEIGHT = 180;
       const CURSOR_POSITIONING_DELAY = 0;
@@ -489,7 +380,7 @@
         let html = processedLines.join('\n');
 
         // Process inline elements
-        // Bold: *text* (non-greedy)
+        // Bold: **text** (non-greedy)
         html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
         // Monospace: `text` (non-greedy)
         html = html.replace(/`(.*?)`/g, '<code>$1</code>');
@@ -498,20 +389,6 @@
         html = html.replace(/\n/g, '<br>');
 
         return html;
-      }
-
-      // Load app title from localStorage on startup
-      function loadAppTitleFromStorage() {
-        const savedTitle = localStorage.getItem('stickyNotesTitle');
-        if (savedTitle) {
-          appTitle.textContent = savedTitle;
-          appTitleInput.value = savedTitle;
-        }
-      }
-
-      // Save app title to localStorage
-      function saveAppTitleToStorage() {
-        localStorage.setItem('stickyNotesTitle', appTitle.textContent);
       }
 
       // Load notes from localStorage on startup
@@ -721,7 +598,7 @@
         });
 
         contentDiv.addEventListener('keydown', function (e) {
-          if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+          if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
             e.preventDefault();
             exitEditMode(note);
           }
@@ -764,14 +641,6 @@
         noteToDelete = null;
       }
 
-      function showSettingsDialog() {
-        settingsDialog.style.display = 'flex';
-      }
-
-      function hideSettingsDialog() {
-        settingsDialog.style.display = 'none';
-      }
-
       confirmYesBtn.addEventListener('click', function () {
         if (noteToDelete) {
           noteToDelete.remove();
@@ -784,17 +653,34 @@
         hideConfirmationDialog();
       });
 
-      settingsBtn.addEventListener('click', function () {
-        showSettingsDialog();
+      // Double-click on canvas to create new note
+      notesCanvas.addEventListener('dblclick', function (e) {
+        // Only create note if clicking on the canvas itself, not on existing notes
+        if (e.target === notesCanvas) {
+          const rect = notesCanvas.getBoundingClientRect();
+          const x = e.clientX - rect.left - 100; // Center the note on click
+          const y = e.clientY - rect.top - 90;
+          const note = createNote('New note...', Math.max(0, x), Math.max(0, y));
+          bringToFront(note);
+        }
       });
 
-      settingsCloseBtn.addEventListener('click', function () {
-        hideSettingsDialog();
+      addNoteBtn.addEventListener('click', function () {
+        const x = 20 + Math.random() * 50;
+        const y = 20 + Math.random() * 50;
+        const note = createNote('New note...', x, y);
+        bringToFront(note);
       });
 
-      appTitleInput.addEventListener('input', function () {
-        appTitle.textContent = this.value || 'Sticky Notes';
-        saveAppTitleToStorage();
+      // Keyboard shortcut: Ctrl/Cmd + ` to create new note
+      document.addEventListener('keydown', function (e) {
+        if ((e.ctrlKey || e.metaKey) && e.key === '`') {
+          e.preventDefault();
+          const x = 20 + Math.random() * 50;
+          const y = 20 + Math.random() * 50;
+          const note = createNote('New note...', x, y);
+          bringToFront(note);
+        }
       });
 
       document.addEventListener('mousemove', function (e) {
@@ -844,14 +730,6 @@
         });
       });
 
-      addNoteBtn.addEventListener('click', function () {
-        const x = 20 + Math.random() * 50;
-        const y = 20 + Math.random() * 50;
-        const note = createNote('New note...', x, y);
-        bringToFront(note);
-      });
-
-      loadAppTitleFromStorage();
       loadNotesFromStorage();
     });
   </script>

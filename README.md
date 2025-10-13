@@ -76,9 +76,9 @@ Checkboxes can be toggled by clicking them in view mode.
 Use **bold** for emphasis and `backticks` for code.
 ```
 
-## Data Storage
+## Data storage
 
-### Automatic Saving
+### Automatic saving
 
 - All notes are automatically saved as you create, edit, move, or resize them
 - No manual save action is required
@@ -125,6 +125,12 @@ This application was created using AI assistance to demonstrate modern web devel
 - Template-based DOM manipulation
 - Event delegation and optimization
 - Progressive enhancement techniques
+
+## Changelog
+
+1.0.1 - Added keyboard shortcut to create a sticky note - `Command`/`Control` + `.`
+
+1.0.0 - Initial release
 
 ## Contributing
 
