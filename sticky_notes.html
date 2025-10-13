@@ -393,7 +393,7 @@
 
       // Load notes from localStorage on startup
       function loadNotesFromStorage() {
-        const savedNotes = localStorage.getItem('sn-K7mQ2xP9nL');
+        const savedNotes = localStorage.getItem('stickyNotes');
         if (savedNotes) {
           const notes = JSON.parse(savedNotes);
           notes.forEach(function (note) {
@@ -419,7 +419,7 @@
             height: parseInt(note.style.height)
           });
         });
-        localStorage.setItem('sn-K7mQ2xP9nL', JSON.stringify(notes));
+        localStorage.setItem('stickyNotes', JSON.stringify(notes));
       }
 
       // Bring note to front
@@ -665,21 +665,24 @@
         }
       });
 
-      addNoteBtn.addEventListener('click', function () {
+      // Function to create a new note at a random position
+      function createNewNote() {
         const x = 20 + Math.random() * 50;
         const y = 20 + Math.random() * 50;
         const note = createNote('New note...', x, y);
         bringToFront(note);
+      }
+
+      addNoteBtn.addEventListener('click', function () {
+        createNewNote();
       });
 
-      // Keyboard shortcut: Ctrl/Cmd + ` to create new note
+      // Keyboard shortcut: Ctrl/Cmd + . to create new note
       document.addEventListener('keydown', function (e) {
-        if ((e.ctrlKey || e.metaKey) && e.key === '`') {
+        // Check for both e.key and e.code to handle different keyboard layouts
+        if ((e.ctrlKey || e.metaKey) && (e.key === '.' || e.code === 'Period')) {
           e.preventDefault();
-          const x = 20 + Math.random() * 50;
-          const y = 20 + Math.random() * 50;
-          const note = createNote('New note...', x, y);
-          bringToFront(note);
+          createNewNote();
         }
       });
 
