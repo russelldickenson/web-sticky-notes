@@ -393,7 +393,7 @@
 
       // Load notes from localStorage on startup
       function loadNotesFromStorage() {
-        const savedNotes = localStorage.getItem('stickyNotes');
+        const savedNotes = localStorage.getItem('sn_7f3a9c2e1d');
         if (savedNotes) {
           const notes = JSON.parse(savedNotes);
           notes.forEach(function (note) {
@@ -419,7 +419,7 @@
             height: parseInt(note.style.height)
           });
         });
-        localStorage.setItem('stickyNotes', JSON.stringify(notes));
+        localStorage.setItem('sn_7f3a9c2e1d', JSON.stringify(notes));
       }
 
       // Bring note to front
