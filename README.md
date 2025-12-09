@@ -106,11 +106,21 @@ This project is licensed under the GNU General Public License v3.0 (GPL-3.0).
 
 ## Changelog
 
-1.1.0 - Complete rewrite
+1.1.1
 
-1.0.1 - Added keyboard shortcut to create a sticky note - `Command`/`Control` + `.`
+- Fixed an issue where the size of manually resized notes was not being saved to local storage.
 
-1.0.0 - Initial release
+1.1.0
+
+- Complete rewrite
+
+1.0.1
+
+- Added keyboard shortcut to create a sticky note - `Command`/`Control` + `.`
+
+1.0.0
+
+- Initial release
 
 ## Contributing
 

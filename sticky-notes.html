@@ -1,9 +1,12 @@
+<!-- Sticky notes 1.1.1 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sticky Notes</title>
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzIgMzIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPCEtLSBOb3RlIGJvZHkgLS0+CiAgPHJlY3QgeD0iMiIgeT0iNCIgd2lkdGg9IjI4IiBoZWlnaHQ9IjI0IiByeD0iMiIgZmlsbD0iI2ZmZmFjZCIvPgogIAogIDwhLS0gTm90ZSBoZWFkZXIgLS0+CiAgPHJlY3QgeD0iMiIgeT0iNCIgd2lkdGg9IjI4IiBoZWlnaHQ9IjciIHJ4PSIyIiBmaWxsPSIjZjlkNzFjIi8+CiAgPHJlY3QgeD0iMiIgeT0iOSIgd2lkdGg9IjI4IiBoZWlnaHQ9IjIiIGZpbGw9IiNmOWQ3MWMiLz4KICAKICA8IS0tIFN1YnRsZSBzaGFkb3cgLS0+CiAgPHJlY3QgeD0iMi41IiB5PSI0LjUiIHdpZHRoPSIyOCIgaGVpZ2h0PSIyNCIgcng9IjIiIGZpbGw9InJnYmEoMCwwLDAsMC4wOCkiIHN0eWxlPSJtaXgtYmxlbmQtbW9kZTogbXVsdGlwbHk7Ii8+CiAgCiAgPCEtLSBEYXJrIGVkZ2VzIG9uIGJvdHRvbSBhbmQgcmlnaHQgLS0+CiAgPHJlY3QgeD0iMjkiIHk9IjUiIHdpZHRoPSIxIiBoZWlnaHQ9IjIzIiBmaWxsPSJyZ2JhKDAsMCwwLDAuNCkiLz4KICA8cmVjdCB4PSIzIiB5PSIyNyIgd2lkdGg9IjI2IiBoZWlnaHQ9IjEiIGZpbGw9InJnYmEoMCwwLDAsMC40KSIvPgo8L3N2Zz4=">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
         * {
@@ -42,7 +45,6 @@
             border-radius: 3px;
             border: none;
             background-color: var(--btn-new-bg);
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
             color: var(--btn-new-text);
             cursor: pointer;
             display: flex;
@@ -97,8 +99,8 @@
             position: absolute;
             top: -12px;
             right: -12px;
-            width: 22px;
-            height: 22px;
+            width: 32px;
+            height: 32px;
             border-radius: 3px;
             border: none;
             background-color: var(--btn-delete-bg);
@@ -108,7 +110,7 @@
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            font-size: 14px;
+            font-size: 18px;
             opacity: 0;
             transition: opacity 0.2s;
             z-index: 10;
@@ -326,7 +328,14 @@
         function saveNotes() {
             const storageKey = getStorageKey();
             const data = {
-                notes: notes,
+                notes: notes.map(note => ({
+                    id: note.id,
+                    content: note.content,
+                    x: note.x,
+                    y: note.y,
+                    width: note.width,
+                    height: note.height
+                })),
                 noteIdCounter: noteIdCounter
             };
             localStorage.setItem(storageKey, JSON.stringify(data));
@@ -654,12 +663,13 @@
                 const noteEl = document.querySelector(`[data-note-id="${draggingNote}"]`);
                 const header = noteEl.querySelector('.note-header');
                 header.classList.remove('dragging');
-            }
-            if (resizingNote !== null) {
+                saveNotes();
+                draggingNote = null;
+            } else if (resizingNote !== null) {
                 document.body.style.cursor = '';
+                saveNotes();
+                resizingNote = null;
             }
-            draggingNote = null;
-            resizingNote = null;
         });
 
         newNoteBtn.addEventListener('click', createNote);
