@@ -7,9 +7,7 @@ Suitable only for desktop browsers.
 ## Features
 
 - Create draggable and resizable sticky notes
-- Markdown-style text formatting
-- Interactive checkboxes for task lists
-- Customizable app title
+- Limited content styling (bold and bullet points)
 - Automatic saving to browser storage
 - Clean, intuitive interface
 
@@ -17,63 +15,52 @@ Suitable only for desktop browsers.
 
 Open the HTML file in any modern web browser to start using the app. No installation or setup required.
 
+> [!NOTE]
+> All notes are stored in your browser's local storage. To use multiple copies of this app, add
+> this to the end of the URL - `?board=<name>`. For example, to have one copy for personal notes and
+> another for work note, you would add `?board=personal` to the personal copy and `?board=work` to
+> the work copy.
+
 ## How to use
 
-### Creating notes
+### Create a note
 
-- Click the **+** button in the top-right corner to create a new sticky note
-- New notes appear with default text that you can immediately edit
+To create a new note, select the **+** button in the top-right corner.
 
-### Editing notes
+### Edit a note
 
 - **Single-click** anywhere in a note's text area to enter edit mode
-- The note will show a distinct shadow when in edit mode
 - **Ctrl+Enter** (Windows/Linux) or **Cmd+Enter** (Mac) to save and exit edit mode
 - **Click outside** the note to automatically save and exit edit mode
 
-### Moving and resizing notes
+### Move and resize a note
 
 - **Drag** the yellow header bar to move notes around the canvas
 - **Drag** the small resize handle in the bottom-right corner to resize notes
 - Notes automatically come to the front when clicked
 
-### Deleting notes
+### Delete a note
 
 - Hover over a note to reveal the **×** button in the top-right corner
-- Click the **×** button and confirm deletion in the dialog
+- Click the **×** button and confirm deletion in the dialog[!]
 
-### Customizing the app
-
-- Click the **settings** button (gear icon) in the top-left corner to change the app title
-
-## Markdown-style formatting
+## Content formatting
 
 The app supports several Markdown-style formatting options:
 
 ### Text Formatting
 
-- **Bold text**: Wrap text in double asterisks `**bold text**`
-- **Monospace text**: Wrap text in backticks `` `code text` ``
-
-### Interactive Checkboxes
-
-Create task lists with clickable checkboxes:
-
-- **Unchecked**: `- [ ] Task to do`
-- **Checked**: `- [x] Completed task`
-
-Checkboxes can be toggled by clicking them in view mode.
+- Bold text: Wrap text in double asterisks `**bold text**`
+- Bullet points: Start a line with `- ` (hyphen and space)
 
 ### Example note content
 
 ```
 **My Task List**
 
-- [ ] Buy groceries
-- [x] Walk the dog
-- [ ] Review `project.js` code
-
-Use **bold** for emphasis and `backticks` for code.
+- Buy groceries
+- Walk the dog
+- Review `project.js` code
 ```
 
 ## Data storage
@@ -84,7 +71,7 @@ Use **bold** for emphasis and `backticks` for code.
 - No manual save action is required
 - Changes are saved instantly when exiting edit mode
 
-### Storage Location
+### Storage location
 
 ⚠️ **Important**: All note content is stored in your browser's localStorage. This means:
 
@@ -93,7 +80,7 @@ Use **bold** for emphasis and `backticks` for code.
 - Notes are not synchronized across different browsers or devices
 - Consider backing up important notes by copying the text elsewhere
 
-### Backup Recommendations
+### Backup recommendations
 
 For important notes, consider:
 - Copying text to a separate document
@@ -112,21 +99,14 @@ This app works in all modern web browsers that support:
 - **Single-file application**: Everything contained in one HTML file
 - **No external dependencies**: Works offline without internet connection
 - **Responsive design**: Adapts to different screen sizes
-- **Cross-platform**: Works on Windows, Mac, Linux, and mobile devices
 
 ## License
 
 This project is licensed under the GNU General Public License v3.0 (GPL-3.0).
 
-## Development
-
-This application was created using AI assistance to demonstrate modern web development practices including:
-- CSS custom properties for theming
-- Template-based DOM manipulation
-- Event delegation and optimization
-- Progressive enhancement techniques
-
 ## Changelog
+
+1.1.0 - Complete rewrite
 
 1.0.1 - Added keyboard shortcut to create a sticky note - `Command`/`Control` + `.`
 
@@ -143,15 +123,7 @@ Contributions are welcome! Please ensure any changes maintain compatibility with
 - Check that localStorage is available (not in private/incognito mode)
 - Verify sufficient storage space is available
 
-### Performance issues
-- Consider reducing the number of notes if performance degrades
-- Close and reopen the browser if memory usage seems high
-
 ### Formatting not working
-- Ensure you're using the correct Markdown syntax
+- Ensure you're using the correct formatting syntax
 - Double-check that text is properly wrapped in formatting characters
 - Try refreshing the page if formatting appears broken
-
----
-
-*Last updated: 2025*
