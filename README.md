@@ -103,6 +103,10 @@ This project is licensed under the GNU General Public License v3.0 (GPL-3.0).
 
 ## Changelog
 
+### 2.0.1
+
+Added a favicon.
+
 ### 2.0.0
 
 Completely rewritten by using Google Gemini.
