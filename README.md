@@ -1,19 +1,22 @@
 # Sticky Notes App
 
-A simple, web-based sticky notes application that allows you to create, edit, and organize digital notes with Markdown-style formatting support.
+A simple, web-based sticky notes application that allows you to create, edit, and organize digital
+notes with Markdown-style formatting support.
 
 Suitable only for desktop browsers.
 
 ## Features
 
-- Create draggable and resizable sticky notes
-- Limited content styling (bold and bullet points)
-- Automatic saving to browser storage
-- Clean, intuitive interface
+- Create draggable and resizable sticky notes.
+- Limited content styling (bold and bullet points).
+- Automatic saving to browser storage.
+- Clean, intuitive interface.
+- Light and dark theme.
 
 ## Getting started
 
-Open the HTML file in any modern web browser to start using the app. No installation or setup required.
+Open the HTML file in any modern web browser to start using the app. No installation or setup
+required.
 
 > [!NOTE]
 > All notes are stored in your browser's local storage. To use multiple copies of this app, add
@@ -29,47 +32,41 @@ To create a new note, select the **+** button in the top-right corner.
 
 ### Edit a note
 
-- **Single-click** anywhere in a note's text area to enter edit mode
-- **Ctrl+Enter** (Windows/Linux) or **Cmd+Enter** (Mac) to save and exit edit mode
-- **Click outside** the note to automatically save and exit edit mode
+Single click** anywhere in a note's text area to enter edit mode. Click outside to exit edit mode.
+The note's content is saved automatically.
 
 ### Move and resize a note
 
-- **Drag** the yellow header bar to move notes around the canvas
-- **Drag** the small resize handle in the bottom-right corner to resize notes
-- Notes automatically come to the front when clicked
+- **Drag** the yellow header bar to move notes around the canvas.
+- **Drag** the small resize handle in the bottom-right corner to resize notes.
+- Notes automatically come to the front when clicked.
 
 ### Delete a note
 
-- Hover over a note to reveal the **×** button in the top-right corner
-- Click the **×** button and confirm deletion in the dialog[!]
+1. Hover over a note to reveal the **×** button in the top-right corner.
+2. Click the **×** button and confirm deletion.
 
 ## Content formatting
 
-The app supports several Markdown-style formatting options:
-
-### Text Formatting
-
-- Bold text: Wrap text in double asterisks `**bold text**`
-- Bullet points: Start a line with `- ` (hyphen and space)
+The app supports on plain text.
 
 ### Example note content
 
 ```
-**My Task List**
+My Task List
 
 - Buy groceries
 - Walk the dog
-- Review `project.js` code
+- Review project.js code
 ```
 
 ## Data storage
 
 ### Automatic saving
 
-- All notes are automatically saved as you create, edit, move, or resize them
-- No manual save action is required
-- Changes are saved instantly when exiting edit mode
+- All notes are automatically saved as you create, edit, move, or resize them.
+- No manual save action is required.
+- Changes are saved instantly when exiting edit mode.
 
 ### Storage location
 
@@ -106,19 +103,23 @@ This project is licensed under the GNU General Public License v3.0 (GPL-3.0).
 
 ## Changelog
 
-1.1.1
+### 2.0.0
+
+Completely rewritten by using Google Gemini.
+
+### 1.1.1
 
 - Fixed an issue where the size of manually resized notes was not being saved to local storage.
 
-1.1.0
+### 1.1.0
 
 - Complete rewrite
 
-1.0.1
+### 1.0.1
 
 - Added keyboard shortcut to create a sticky note - `Command`/`Control` + `.`
 
-1.0.0
+### 1.0.0
 
 - Initial release
 

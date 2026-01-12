@@ -1,715 +1,462 @@
-<!-- Sticky notes 1.1.1 -->
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sticky Notes</title>
-    <link rel="icon" type="image/svg+xml"
-        href="data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzIgMzIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPCEtLSBOb3RlIGJvZHkgLS0+CiAgPHJlY3QgeD0iMiIgeT0iNCIgd2lkdGg9IjI4IiBoZWlnaHQ9IjI0IiByeD0iMiIgZmlsbD0iI2ZmZmFjZCIvPgogIAogIDwhLS0gTm90ZSBoZWFkZXIgLS0+CiAgPHJlY3QgeD0iMiIgeT0iNCIgd2lkdGg9IjI4IiBoZWlnaHQ9IjciIHJ4PSIyIiBmaWxsPSIjZjlkNzFjIi8+CiAgPHJlY3QgeD0iMiIgeT0iOSIgd2lkdGg9IjI4IiBoZWlnaHQ9IjIiIGZpbGw9IiNmOWQ3MWMiLz4KICAKICA8IS0tIFN1YnRsZSBzaGFkb3cgLS0+CiAgPHJlY3QgeD0iMi41IiB5PSI0LjUiIHdpZHRoPSIyOCIgaGVpZ2h0PSIyNCIgcng9IjIiIGZpbGw9InJnYmEoMCwwLDAsMC4wOCkiIHN0eWxlPSJtaXgtYmxlbmQtbW9kZTogbXVsdGlwbHk7Ii8+CiAgCiAgPCEtLSBEYXJrIGVkZ2VzIG9uIGJvdHRvbSBhbmQgcmlnaHQgLS0+CiAgPHJlY3QgeD0iMjkiIHk9IjUiIHdpZHRoPSIxIiBoZWlnaHQ9IjIzIiBmaWxsPSJyZ2JhKDAsMCwwLDAuNCkiLz4KICA8cmVjdCB4PSIzIiB5PSIyNyIgd2lkdGg9IjI2IiBoZWlnaHQ9IjEiIGZpbGw9InJnYmEoMCwwLDAsMC40KSIvPgo8L3N2Zz4=">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sticky Notes</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script>
+    // Configure Tailwind to use 'dark' class for dark mode
+    tailwind.config = {
+      darkMode: 'class',
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-        body {
-            font-family: 'Roboto', sans-serif;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
+    body {
+      font-family: 'Inter', sans-serif;
+      overflow: hidden;
+      transition: background-color 0.3s ease;
+    }
 
-        .header {
-            padding: 20px;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: var(--header-bg);
-        }
+    /* Note Styles - Light Mode */
+    .note {
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      border-radius: 0.375rem;
+      overflow: hidden;
+      transition: box-shadow 0.2s, transform 0.1s;
+      width: 200px;
+      min-height: 150px;
+    }
 
-        h1 {
-            font-size: 24px;
-            color: var(--text-primary);
-            width: 100%;
-            text-align: center;
-        }
+    .note:hover {
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      z-index: 10;
+    }
 
-        .new-note-btn {
-            width: 40px;
-            height: 40px;
-            border-radius: 3px;
-            border: none;
-            background-color: var(--btn-new-bg);
-            color: var(--btn-new-text);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            font-weight: bold;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.7);
-        }
+    .note-header {
+      background-color: #fde047;
+      /* Yellow-300 */
+      height: 2rem;
+      cursor: grab;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 0 0.5rem;
+      flex-shrink: 0;
+    }
 
-        .new-note-btn:hover {
-            opacity: 0.9;
-        }
+    .note-body {
+      background-color: #fef08a;
+      /* Yellow-200 */
+      flex-grow: 1;
+      padding: 1rem;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
 
-        .board {
-            flex: 1;
-            position: relative;
-            background-color: var(--board-bg);
-            overflow: hidden;
-        }
+    .note-textarea {
+      width: 100%;
+      height: 100%;
+      background: transparent;
+      border: none;
+      resize: none;
+      outline: none;
+      font-family: 'Inter', sans-serif;
+      font-size: 1rem;
+      line-height: 1.5;
+      color: #374151;
+      overflow: auto;
+    }
 
-        .note {
-            position: absolute;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-            border-radius: 3px;
-            transition: box-shadow 0.2s;
-        }
+    /* Dark Mode Note Overrides - Muted Yellow */
+    .dark .note {
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+    }
 
-        .note:hover {
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-        }
+    .dark .note-header {
+      background-color: #71710a;
+      /* Muted olive-yellow header */
+    }
 
-        .note.editing {
-            border: 2px solid #999;
-        }
+    .dark .note-body {
+      background-color: #424206;
+      /* Deep muted yellow-gray body */
+    }
 
-        .note-header {
-            background-color: var(--note-header-bg);
-            padding: 8px;
-            min-height: 32px;
-            cursor: grab;
-            position: relative;
-            border-radius: 3px 3px 0 0;
-        }
+    .dark .note-textarea {
+      color: #fef9c3;
+    }
 
-        .note-header.dragging {
-            cursor: grabbing;
-        }
+    /* Delete Button */
+    .delete-btn {
+      opacity: 0;
+      transition: opacity 0.2s ease-in-out;
+      color: #713f12;
+      cursor: pointer;
+      font-size: 0.875rem;
+      background: rgba(255, 255, 255, 0.3);
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+    }
 
-        .delete-btn {
-            position: absolute;
-            top: -12px;
-            right: -12px;
-            width: 32px;
-            height: 32px;
-            border-radius: 3px;
-            border: none;
-            background-color: var(--btn-delete-bg);
-            color: var(--btn-delete-text);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 18px;
-            opacity: 0;
-            transition: opacity 0.2s;
-            z-index: 10;
-        }
+    .dark .delete-btn {
+      color: #fef08a;
+      background: rgba(0, 0, 0, 0.2);
+    }
 
-        .note:hover .delete-btn {
-            opacity: 1;
-        }
+    .note:hover .delete-btn {
+      opacity: 1;
+    }
 
-        .note.editing .delete-btn {
-            display: none;
-        }
+    /* Resize Handle */
+    .resize-handle {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 16px;
+      height: 16px;
+      cursor: nwse-resize;
+      background: linear-gradient(135deg, transparent 50%, rgba(0, 0, 0, 0.1) 50%);
+      border-bottom-right-radius: 0.375rem;
+      z-index: 20;
+    }
 
-        .note-body {
-            background-color: var(--note-body-bg);
-            flex: 1;
-            padding: 8px;
-            overflow: hidden;
-            cursor: pointer;
-            border-radius: 0 0 3px 3px;
-            font-size: 14px;
-            line-height: 1.5;
-            position: relative;
-        }
+    .dark .resize-handle {
+      background: linear-gradient(135deg, transparent 50%, rgba(255, 255, 255, 0.1) 50%);
+    }
 
-        .note.editing .note-body {
-            cursor: text;
-        }
+    #modal-overlay {
+      background-color: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(2px);
+    }
 
-        .note-body textarea {
-            width: 100%;
-            height: 100%;
-            border: none;
-            background-color: transparent;
-            font-family: 'Roboto', sans-serif;
-            font-size: 14px;
-            resize: none;
-            outline: none;
-            color: var(--text-primary);
-            overflow: hidden;
-        }
-
-        .note-content {
-            white-space: pre-wrap;
-        }
-
-        .note-content ul {
-            margin-left: 20px;
-        }
-
-        .note-content li {
-            list-style-type: disc;
-        }
-
-        .resize-handle {
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            width: 16px;
-            height: 16px;
-            cursor: nwse-resize;
-            opacity: 0;
-            transition: opacity 0.2s;
-        }
-
-        .note:hover .resize-handle {
-            opacity: 1;
-        }
-
-        .resize-handle::after {
-            content: '';
-            position: absolute;
-            bottom: 2px;
-            right: 2px;
-            width: 0;
-            height: 0;
-            border-style: solid;
-            border-width: 0 0 12px 12px;
-            border-color: transparent transparent #999 transparent;
-        }
-
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(0, 0, 0, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-        }
-
-        .modal {
-            background-color: var(--modal-bg);
-            padding: 24px;
-            border-radius: 3px;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-            max-width: 320px;
-        }
-
-        .modal h3 {
-            margin: 0 0 16px 0;
-            color: var(--text-primary);
-        }
-
-        .modal p {
-            margin: 0 0 24px 0;
-            color: var(--text-secondary);
-        }
-
-        .modal-buttons {
-            display: flex;
-            gap: 12px;
-            justify-content: flex-end;
-        }
-
-        .modal-btn {
-            padding: 8px 16px;
-            border-radius: 3px;
-            border: none;
-            cursor: pointer;
-            font-family: 'Roboto', sans-serif;
-        }
-
-        .modal-btn-cancel {
-            border: 1px solid var(--border-color);
-            background-color: var(--modal-bg);
-            color: var(--text-primary);
-        }
-
-        .modal-btn-confirm {
-            background-color: var(--btn-delete-bg);
-            color: var(--btn-delete-text);
-        }
-
-        /* Light theme (default) */
-        :root {
-            --header-bg: #ffffff;
-            --board-bg: #f5f5f5;
-            --border-color: #dddddd;
-            --text-primary: #000000;
-            --text-secondary: #666666;
-            --btn-new-bg: #22c55e;
-            --btn-new-text: #ffffff;
-            --btn-delete-bg: #ef4444;
-            --btn-delete-text: #ffffff;
-            --note-header-bg: #f9d71c;
-            --note-body-bg: #fffacd;
-            --modal-bg: #ffffff;
-        }
-    </style>
+    #canvas {
+      width: 100vw;
+      height: calc(100vh - 4rem);
+      position: relative;
+      overflow: auto;
+    }
+  </style>
 </head>
-<body>
-    <div class="header">
-        <h1>Sticky Notes</h1>
-        <button class="new-note-btn" id="newNoteBtn">+</button>
-    </div>
-    <div class="board" id="board"></div>
 
-    <script>
-        const themes = {
-            light: {
-                headerBg: '#ffffff',
-                boardBg: '#f5f5f5',
-                borderColor: '#dddddd',
-                textPrimary: '#000000',
-                textSecondary: '#666666',
-                btnNewBg: '#22c55e',
-                btnNewText: '#ffffff',
-                btnDeleteBg: '#ef4444',
-                btnDeleteText: '#ffffff',
-                noteHeaderBg: '#f9d71c',
-                noteBodyBg: '#fffacd',
-                modalBg: '#ffffff'
-            }
+<body class="h-screen flex flex-col bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+
+  <!-- Header -->
+  <header
+    class="h-16 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-6 shadow-sm z-50 relative">
+    <div class="flex items-center gap-2">
+      <!-- Theme Toggle -->
+      <button id="theme-toggle" title="Toggle theme"
+        class="w-10 h-10 flex items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-[4px] transition-colors">
+        <i id="theme-icon" class="fa-solid fa-moon text-lg"></i>
+      </button>
+    </div>
+
+    <div class="flex flex-col items-center absolute left-1/2 -translate-x-1/2">
+      <div class="flex items-center gap-3">
+        <i class="fa-solid fa-note-sticky text-yellow-400 text-2xl"></i>
+        <h1 class="text-xl font-bold text-gray-800 dark:text-white">Sticky Notes</h1>
+      </div>
+      <span id="board-name"
+        class="text-[10px] uppercase tracking-widest text-gray-400 dark:text-gray-500 font-semibold">Default
+        Board</span>
+    </div>
+
+    <button id="add-note-btn" title="New note"
+      class="w-10 h-10 flex items-center justify-center bg-green-500 hover:bg-green-600 text-white rounded-[4px] shadow-md transition-all duration-200 z-10">
+      <i class="fa-solid fa-plus text-lg"></i>
+    </button>
+  </header>
+
+  <!-- Canvas -->
+  <main id="canvas">
+    <!-- Notes will be injected here -->
+  </main>
+
+  <!-- Delete Confirmation Modal -->
+  <div id="modal-overlay" class="fixed inset-0 hidden items-center justify-center z-[100]">
+    <div
+      class="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-80 transform transition-all scale-100 border border-transparent dark:border-gray-700">
+      <div class="flex items-center gap-3 mb-4 text-red-500">
+        <i class="fa-solid fa-triangle-exclamation text-xl"></i>
+        <h3 class="text-lg font-bold text-gray-900 dark:text-white">Delete Note?</h3>
+      </div>
+      <p class="text-gray-600 dark:text-gray-400 mb-6">Are you sure you want to delete this sticky note? This action
+        cannot be undone.</p>
+      <div class="flex justify-end gap-3">
+        <button id="cancel-delete"
+          class="px-4 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-md transition-colors">
+          Cancel
+        </button>
+        <button id="confirm-delete"
+          class="px-4 py-2 text-white bg-red-500 hover:bg-red-600 rounded-md transition-colors shadow-sm">
+          Delete
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // --- Multi-Board & Theme Logic ---
+    const urlParams = new URLSearchParams(window.location.search);
+    const boardId = urlParams.get('board') || 'default';
+    const STORAGE_KEY = `stickyNotes_${boardId}`;
+    const THEME_KEY = 'stickyNotes_theme';
+
+    // --- Theme Management ---
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+
+    function applyTheme(theme) {
+      if (theme === 'dark') {
+        document.documentElement.classList.add('dark');
+        themeIcon.classList.replace('fa-moon', 'fa-sun');
+      } else {
+        document.documentElement.classList.remove('dark');
+        themeIcon.classList.replace('fa-sun', 'fa-moon');
+      }
+      localStorage.setItem(THEME_KEY, theme);
+    }
+
+    // Init Theme
+    const savedTheme = localStorage.getItem(THEME_KEY) || 'light';
+    applyTheme(savedTheme);
+
+    themeToggle.addEventListener('click', () => {
+      const isDark = document.documentElement.classList.contains('dark');
+      applyTheme(isDark ? 'light' : 'dark');
+    });
+
+    // Board UI
+    document.getElementById('board-name').textContent = `${boardId} Board`;
+
+    // --- State Management ---
+    let notes = [];
+    let noteToDeleteId = null;
+    let highestZIndex = 10;
+
+    const storedNotes = localStorage.getItem(STORAGE_KEY);
+    if (storedNotes) {
+      try {
+        notes = JSON.parse(storedNotes);
+        notes.forEach(n => {
+          if (n.zIndex > highestZIndex) highestZIndex = n.zIndex;
+        });
+      } catch (e) {
+        console.error("Failed to parse notes", e);
+        notes = [];
+      }
+    }
+
+    const canvas = document.getElementById('canvas');
+    const addBtn = document.getElementById('add-note-btn');
+    const modalOverlay = document.getElementById('modal-overlay');
+    const cancelDeleteBtn = document.getElementById('cancel-delete');
+    const confirmDeleteBtn = document.getElementById('confirm-delete');
+
+    function renderNotes() {
+      canvas.innerHTML = '';
+      notes.forEach(note => createNoteElement(note));
+    }
+
+    renderNotes();
+
+    function generateId() {
+      return Date.now().toString(36) + Math.random().toString(36).substr(2);
+    }
+
+    function createNoteData() {
+      const x = 50 + (Math.random() * 100);
+      const y = 50 + (Math.random() * 100);
+
+      const newNote = {
+        id: generateId(),
+        content: '',
+        x: x,
+        y: y,
+        width: 250,
+        height: 250,
+        zIndex: ++highestZIndex
+      };
+      notes.push(newNote);
+      saveNotes();
+      createNoteElement(newNote);
+    }
+
+    function saveNotes() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(notes));
+    }
+
+    function updateNote(id, updates) {
+      const noteIndex = notes.findIndex(n => n.id === id);
+      if (noteIndex !== -1) {
+        notes[noteIndex] = { ...notes[noteIndex], ...updates };
+        saveNotes();
+      }
+    }
+
+    function deleteNote(id) {
+      notes = notes.filter(n => n.id !== id);
+      saveNotes();
+      const el = document.getElementById(id);
+      if (el) el.remove();
+    }
+
+    function bringToFront(id) {
+      const note = notes.find(n => n.id === id);
+      if (note && note.zIndex !== highestZIndex) {
+        highestZIndex++;
+        note.zIndex = highestZIndex;
+        const el = document.getElementById(id);
+        if (el) el.style.zIndex = highestZIndex;
+        saveNotes();
+      }
+    }
+
+    function createNoteElement(noteData) {
+      const noteEl = document.createElement('div');
+      noteEl.classList.add('note');
+      noteEl.id = noteData.id;
+
+      noteEl.style.left = `${noteData.x}px`;
+      noteEl.style.top = `${noteData.y}px`;
+      noteEl.style.width = `${noteData.width}px`;
+      noteEl.style.height = `${noteData.height || 250}px`;
+      noteEl.style.zIndex = noteData.zIndex;
+
+      noteEl.innerHTML = `
+                <div class="note-header">
+                    <button class="delete-btn" title="Delete note">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                </div>
+                <div class="note-body">
+                    <textarea class="note-textarea" placeholder="Type your note here...">${noteData.content}</textarea>
+                    <div class="resize-handle"></div>
+                </div>
+            `;
+
+      const textarea = noteEl.querySelector('textarea');
+      textarea.addEventListener('input', (e) => {
+        updateNote(noteData.id, { content: e.target.value });
+      });
+
+      noteEl.addEventListener('mousedown', () => {
+        bringToFront(noteData.id);
+      });
+
+      const deleteBtn = noteEl.querySelector('.delete-btn');
+      deleteBtn.addEventListener('mousedown', (e) => e.stopPropagation());
+      deleteBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        noteToDeleteId = noteData.id;
+        modalOverlay.classList.remove('hidden');
+        modalOverlay.classList.add('flex');
+      });
+
+      const header = noteEl.querySelector('.note-header');
+      header.addEventListener('mousedown', (e) => {
+        if (e.target.closest('.delete-btn')) return;
+        e.preventDefault();
+
+        let startX = e.clientX;
+        let startY = e.clientY;
+        let startLeft = noteEl.offsetLeft;
+        let startTop = noteEl.offsetTop;
+
+        const onMouseMove = (moveEvent) => {
+          const dx = moveEvent.clientX - startX;
+          const dy = moveEvent.clientY - startY;
+          noteEl.style.left = `${startLeft + dx}px`;
+          noteEl.style.top = `${startTop + dy}px`;
         };
 
-        let currentTheme = 'light';
-        let notes = [];
-        let noteIdCounter = 1;
-        let draggingNote = null;
-        let resizingNote = null;
-        let dragOffset = { x: 0, y: 0 };
-        let editingId = null;
+        const onMouseUp = () => {
+          document.removeEventListener('mousemove', onMouseMove);
+          document.removeEventListener('mouseup', onMouseUp);
+          updateNote(noteData.id, {
+            x: parseInt(noteEl.style.left),
+            y: parseInt(noteEl.style.top)
+          });
+        };
 
-        const board = document.getElementById('board');
-        const newNoteBtn = document.getElementById('newNoteBtn');
+        document.addEventListener('mousemove', onMouseMove);
+        document.addEventListener('mouseup', onMouseUp);
+      });
 
-        // Generate unique storage key based on URL
-        function getStorageKey() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const boardName = urlParams.get('board') || 'default';
-            return `sticky-notes-${boardName}`;
-        }
+      const resizer = noteEl.querySelector('.resize-handle');
+      resizer.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
 
-        // Load notes from localStorage
-        function loadNotes() {
-            const storageKey = getStorageKey();
-            const saved = localStorage.getItem(storageKey);
-            if (saved) {
-                try {
-                    const data = JSON.parse(saved);
-                    notes = data.notes || [];
-                    noteIdCounter = data.noteIdCounter || 1;
-                    renderNotes();
-                } catch (e) {
-                    console.error('Failed to load notes:', e);
-                }
-            }
-        }
+        let startX = e.clientX;
+        let startY = e.clientY;
+        let startWidth = parseInt(document.defaultView.getComputedStyle(noteEl).width, 10);
+        let startHeight = parseInt(document.defaultView.getComputedStyle(noteEl).height, 10);
 
-        // Save notes to localStorage
-        function saveNotes() {
-            const storageKey = getStorageKey();
-            const data = {
-                notes: notes.map(note => ({
-                    id: note.id,
-                    content: note.content,
-                    x: note.x,
-                    y: note.y,
-                    width: note.width,
-                    height: note.height
-                })),
-                noteIdCounter: noteIdCounter
-            };
-            localStorage.setItem(storageKey, JSON.stringify(data));
-        }
+        const onMouseMove = (moveEvent) => {
+          const dx = moveEvent.clientX - startX;
+          const dy = moveEvent.clientY - startY;
 
-        function applyTheme(themeName) {
-            const theme = themes[themeName];
-            const root = document.documentElement;
-            
-            root.style.setProperty('--header-bg', theme.headerBg);
-            root.style.setProperty('--board-bg', theme.boardBg);
-            root.style.setProperty('--border-color', theme.borderColor);
-            root.style.setProperty('--text-primary', theme.textPrimary);
-            root.style.setProperty('--text-secondary', theme.textSecondary);
-            root.style.setProperty('--btn-new-bg', theme.btnNewBg);
-            root.style.setProperty('--btn-new-text', theme.btnNewText);
-            root.style.setProperty('--btn-delete-bg', theme.btnDeleteBg);
-            root.style.setProperty('--btn-delete-text', theme.btnDeleteText);
-            root.style.setProperty('--note-header-bg', theme.noteHeaderBg);
-            root.style.setProperty('--note-body-bg', theme.noteBodyBg);
-            root.style.setProperty('--modal-bg', theme.modalBg);
-            
-            currentTheme = themeName;
-        }
+          let newWidth = startWidth + dx;
+          let newHeight = startHeight + dy;
 
-        function createNote() {
-            const note = {
-                id: noteIdCounter++,
-                content: '',
-                x: 50 + (notes.length * 20) % 300,
-                y: 50 + (notes.length * 20) % 300,
-                width: 200,
-                height: 180,
-                editing: true
-            };
-            notes.push(note);
-            editingId = note.id;
-            renderNotes();
-            
-            const noteEl = document.querySelector(`[data-note-id="${note.id}"]`);
-            const textarea = noteEl.querySelector('textarea');
-            if (textarea) {
-                textarea.focus();
-            }
-        }
+          if (newWidth < 150) newWidth = 150;
+          if (newHeight < 150) newHeight = 150;
 
-        function deleteNote(id) {
-            showDeleteConfirmation(id);
-        }
+          noteEl.style.width = `${newWidth}px`;
+          noteEl.style.height = `${newHeight}px`;
+        };
 
-        function confirmDelete(id) {
-            notes = notes.filter(note => note.id !== id);
-            saveNotes();
-            renderNotes();
-            hideDeleteConfirmation();
-        }
+        const onMouseUp = () => {
+          document.removeEventListener('mousemove', onMouseMove);
+          document.removeEventListener('mouseup', onMouseUp);
+          updateNote(noteData.id, {
+            width: parseInt(noteEl.style.width),
+            height: parseInt(noteEl.style.height)
+          });
+        };
 
-        function updateNoteContent(id, content) {
-            const note = notes.find(n => n.id === id);
-            if (note) {
-                note.content = content;
-            }
-        }
+        document.addEventListener('mousemove', onMouseMove);
+        document.addEventListener('mouseup', onMouseUp);
+      });
 
-        function setEditMode(id, editing) {
-            const note = notes.find(n => n.id === id);
-            if (note) {
-                note.editing = editing;
-                editingId = editing ? id : null;
-                if (!editing) {
-                    saveNotes();
-                }
-                renderNotes();
-                
-                if (editing) {
-                    setTimeout(() => {
-                        const noteEl = document.querySelector(`[data-note-id="${id}"]`);
-                        const textarea = noteEl?.querySelector('textarea');
-                        if (textarea) {
-                            textarea.focus();
-                        }
-                    }, 0);
-                }
-            }
-        }
+      canvas.appendChild(noteEl);
+    }
 
-        function renderMarkdown(text) {
-            if (!text) return '';
-            
-            const lines = text.split('\n');
-            let html = '';
-            let inList = false;
-            
-            for (let line of lines) {
-                if (line.startsWith('- ')) {
-                    if (!inList) {
-                        html += '<ul>';
-                        inList = true;
-                    }
-                    html += `<li>${processInline(line.substring(2))}</li>`;
-                } else {
-                    if (inList) {
-                        html += '</ul>';
-                        inList = false;
-                    }
-                    html += `<div>${processInline(line) || '&nbsp;'}</div>`;
-                }
-            }
-            
-            if (inList) {
-                html += '</ul>';
-            }
-            
-            return html;
-        }
+    addBtn.addEventListener('click', createNoteData);
 
-        function processInline(text) {
-            let result = '';
-            let i = 0;
-            
-            while (i < text.length) {
-                if (text[i] === '*' && text[i + 1] === '*') {
-                    let j = i + 2;
-                    let boldText = '';
-                    while (j < text.length - 1 && !(text[j] === '*' && text[j + 1] === '*')) {
-                        boldText += text[j];
-                        j++;
-                    }
-                    if (j < text.length - 1) {
-                        result += `<strong>${boldText}</strong>`;
-                        i = j + 2;
-                    } else {
-                        result += text[i];
-                        i++;
-                    }
-                } else {
-                    result += text[i];
-                    i++;
-                }
-            }
-            
-            return result;
-        }
+    const closeModal = () => {
+      modalOverlay.classList.add('hidden');
+      modalOverlay.classList.remove('flex');
+      noteToDeleteId = null;
+    };
 
-        function renderNotes() {
-            board.innerHTML = '';
-            
-            notes.forEach(note => {
-                const noteEl = document.createElement('div');
-                noteEl.className = 'note' + (note.editing ? ' editing' : '');
-                noteEl.setAttribute('data-note-id', note.id);
-                noteEl.style.left = note.x + 'px';
-                noteEl.style.top = note.y + 'px';
-                noteEl.style.width = note.width + 'px';
-                noteEl.style.height = note.height + 'px';
-                
-                const header = document.createElement('div');
-                header.className = 'note-header';
-                header.addEventListener('mousedown', (e) => startDragging(note.id, e));
-                
-                const deleteBtn = document.createElement('button');
-                deleteBtn.className = 'delete-btn';
-                deleteBtn.textContent = '×';
-                deleteBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    deleteNote(note.id);
-                });
-                header.appendChild(deleteBtn);
-                
-                const body = document.createElement('div');
-                body.className = 'note-body';
-                
-                if (note.editing) {
-                    const textarea = document.createElement('textarea');
-                    textarea.value = note.content;
-                    textarea.addEventListener('input', (e) => {
-                        updateNoteContent(note.id, e.target.value);
-                        autoExpandTextarea(e.target, note.id);
-                    });
-                    body.appendChild(textarea);
-                    
-                    setTimeout(() => autoExpandTextarea(textarea, note.id), 0);
-                } else {
-                    const contentDiv = document.createElement('div');
-                    contentDiv.className = 'note-content';
-                    contentDiv.innerHTML = renderMarkdown(note.content);
-                    body.appendChild(contentDiv);
-                    body.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        if (e.target.tagName !== 'INPUT') {
-                            // Exit edit mode on any other note first
-                            if (editingId !== null && editingId !== note.id) {
-                                setEditMode(editingId, false);
-                            }
-                            setEditMode(note.id, true);
-                        }
-                    });
-                }
-                
-                const resizeHandle = document.createElement('div');
-                resizeHandle.className = 'resize-handle';
-                resizeHandle.addEventListener('mousedown', (e) => startResizing(note.id, e));
-                
-                noteEl.appendChild(header);
-                noteEl.appendChild(body);
-                noteEl.appendChild(resizeHandle);
-                board.appendChild(noteEl);
-            });
-        }
+    cancelDeleteBtn.addEventListener('click', closeModal);
+    modalOverlay.addEventListener('click', (e) => {
+      if (e.target === modalOverlay) closeModal();
+    });
 
-        function startDragging(id, e) {
-            if (e.target.closest('.resize-handle')) return;
-            
-            const note = notes.find(n => n.id === id);
-            const boardRect = board.getBoundingClientRect();
-            
-            dragOffset.x = e.clientX - boardRect.left - note.x;
-            dragOffset.y = e.clientY - boardRect.top - note.y;
-            draggingNote = id;
-            
-            const noteEl = document.querySelector(`[data-note-id="${id}"]`);
-            const header = noteEl.querySelector('.note-header');
-            header.classList.add('dragging');
-        }
+    confirmDeleteBtn.addEventListener('click', () => {
+      if (noteToDeleteId) {
+        deleteNote(noteToDeleteId);
+        closeModal();
+      }
+    });
 
-        function startResizing(id, e) {
-            e.stopPropagation();
-            resizingNote = id;
-        }
-
-        function autoExpandTextarea(textarea, noteId) {
-            const note = notes.find(n => n.id === noteId);
-            const noteEl = document.querySelector(`[data-note-id="${noteId}"]`);
-            
-            textarea.style.height = 'auto';
-            const scrollHeight = textarea.scrollHeight;
-            const headerHeight = 32;
-            const padding = 16;
-            const minBodyHeight = 120;
-            
-            const requiredHeight = Math.max(minBodyHeight, scrollHeight + headerHeight + padding);
-            
-            if (requiredHeight > note.height) {
-                note.height = requiredHeight;
-                noteEl.style.height = note.height + 'px';
-            }
-            
-            textarea.style.height = (note.height - headerHeight - padding) + 'px';
-        }
-
-        function showDeleteConfirmation(id) {
-            const overlay = document.createElement('div');
-            overlay.className = 'modal-overlay';
-            overlay.id = 'deleteModal';
-            
-            const modal = document.createElement('div');
-            modal.className = 'modal';
-            
-            const heading = document.createElement('h3');
-            heading.textContent = 'Delete Note?';
-            
-            const text = document.createElement('p');
-            text.textContent = 'Are you sure you want to delete this note?';
-            
-            const buttons = document.createElement('div');
-            buttons.className = 'modal-buttons';
-            
-            const cancelBtn = document.createElement('button');
-            cancelBtn.className = 'modal-btn modal-btn-cancel';
-            cancelBtn.textContent = 'No';
-            cancelBtn.addEventListener('click', hideDeleteConfirmation);
-            
-            const confirmBtn = document.createElement('button');
-            confirmBtn.className = 'modal-btn modal-btn-confirm';
-            confirmBtn.textContent = 'Yes';
-            confirmBtn.addEventListener('click', () => confirmDelete(id));
-            
-            buttons.appendChild(cancelBtn);
-            buttons.appendChild(confirmBtn);
-            modal.appendChild(heading);
-            modal.appendChild(text);
-            modal.appendChild(buttons);
-            overlay.appendChild(modal);
-            
-            document.body.appendChild(overlay);
-        }
-
-        function hideDeleteConfirmation() {
-            const modal = document.getElementById('deleteModal');
-            if (modal) {
-                modal.remove();
-            }
-        }
-
-        document.addEventListener('mousemove', (e) => {
-            if (draggingNote !== null) {
-                const note = notes.find(n => n.id === draggingNote);
-                const boardRect = board.getBoundingClientRect();
-                
-                note.x = Math.max(0, Math.min(e.clientX - boardRect.left - dragOffset.x, boardRect.width - note.width));
-                note.y = Math.max(0, Math.min(e.clientY - boardRect.top - dragOffset.y, boardRect.height - note.height));
-                
-                const noteEl = document.querySelector(`[data-note-id="${draggingNote}"]`);
-                noteEl.style.left = note.x + 'px';
-                noteEl.style.top = note.y + 'px';
-            }
-            
-            if (resizingNote !== null) {
-                document.body.style.cursor = 'nwse-resize';
-                
-                const note = notes.find(n => n.id === resizingNote);
-                const boardRect = board.getBoundingClientRect();
-                
-                note.width = Math.max(150, e.clientX - boardRect.left - note.x);
-                note.height = Math.max(120, e.clientY - boardRect.top - note.y);
-                
-                const noteEl = document.querySelector(`[data-note-id="${resizingNote}"]`);
-                noteEl.style.width = note.width + 'px';
-                noteEl.style.height = note.height + 'px';
-            }
-        });
-
-        document.addEventListener('mouseup', () => {
-            if (draggingNote !== null) {
-                const noteEl = document.querySelector(`[data-note-id="${draggingNote}"]`);
-                const header = noteEl.querySelector('.note-header');
-                header.classList.remove('dragging');
-                saveNotes();
-                draggingNote = null;
-            } else if (resizingNote !== null) {
-                document.body.style.cursor = '';
-                saveNotes();
-                resizingNote = null;
-            }
-        });
-
-        newNoteBtn.addEventListener('click', createNote);
-
-        // Separate click handler for exiting edit mode
-        document.addEventListener('click', (e) => {
-            if (editingId !== null) {
-                const noteEl = document.querySelector(`[data-note-id="${editingId}"]`);
-                if (noteEl && !noteEl.contains(e.target)) {
-                    setEditMode(editingId, false);
-                }
-            }
-        });
-
-        // Keyboard shortcuts
-        document.addEventListener('keydown', (e) => {
-            const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
-            const modKey = isMac ? e.metaKey : e.ctrlKey;
-            
-            // Cmd/Ctrl + . = create new note
-            if (modKey && e.key === '.') {
-                e.preventDefault();
-                createNote();
-            }
-            
-            // Cmd/Ctrl + Enter = exit edit mode
-            if (modKey && (e.key === 'Enter' || e.key === 'Return')) {
-                e.preventDefault();
-                if (editingId !== null) {
-                    setEditMode(editingId, false);
-                }
-            }
-        });
-
-        // Load notes on startup
-        loadNotes();
-
-        // Initialize with light theme
-        applyTheme('light');
-    </script>
+  </script>
 </body>
+
 </html>
