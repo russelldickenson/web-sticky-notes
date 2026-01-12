@@ -28,12 +28,15 @@ required.
 
 ### Create a note
 
-To create a new note, select the **+** button in the top-right corner.
+To create a new note, select the **+** button in the top-right corner or press `[Command/Control]` +
+`.`
 
 ### Edit a note
 
-Single click** anywhere in a note's text area to enter edit mode. Click outside to exit edit mode.
+Single click anywhere in a note's text area to enter edit mode. Click outside to exit edit mode.
 The note's content is saved automatically.
+
+Note: You can also exit edit mode by pressing `[Command]/[Control]` + `[Enter]`.
 
 ### Move and resize a note
 
@@ -102,6 +105,11 @@ This app works in all modern web browsers that support:
 This project is licensed under the GNU General Public License v3.0 (GPL-3.0).
 
 ## Changelog
+
+### 2.0.2
+
+- Changed "New Note" button to a pill shape and added a tooltip.
+- Added keyboard handling for creating a note and exiting edit mode.
 
 ### 2.0.1
 

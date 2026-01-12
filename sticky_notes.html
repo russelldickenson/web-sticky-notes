@@ -177,9 +177,10 @@
         Board</span>
     </div>
 
-    <button id="add-note-btn" title="New note"
-      class="w-10 h-10 flex items-center justify-center bg-green-500 hover:bg-green-600 text-white rounded-[4px] shadow-md transition-all duration-200 z-10">
-      <i class="fa-solid fa-plus text-lg"></i>
+    <!-- Updated Ghost Pill Button: Border increased to 2px (border-2) -->
+    <button id="add-note-btn" title="New Note (Cmd/Ctrl + .)"
+      class="flex items-center justify-center w-10 h-10 text-yellow-500 dark:text-yellow-400 border-2 border-yellow-400 dark:border-yellow-600 rounded-full hover:bg-yellow-400 hover:text-white dark:hover:bg-yellow-600 dark:hover:text-yellow-100 transition-all duration-200 shadow-sm active:scale-95">
+      <i class="fa-solid fa-plus text-sm"></i>
     </button>
   </header>
 
@@ -295,7 +296,9 @@
       };
       notes.push(newNote);
       saveNotes();
-      createNoteElement(newNote);
+      const el = createNoteElement(newNote);
+      const textarea = el.querySelector('textarea');
+      if (textarea) textarea.focus();
     }
 
     function saveNotes() {
@@ -437,7 +440,25 @@
       });
 
       canvas.appendChild(noteEl);
+      return noteEl;
     }
+
+    // --- Global Keyboard Handling ---
+    document.addEventListener('keydown', (e) => {
+      const isModKey = e.metaKey || e.ctrlKey;
+
+      if (isModKey && e.key === '.') {
+        e.preventDefault();
+        createNoteData();
+      }
+
+      if (isModKey && e.key === 'Enter') {
+        if (document.activeElement && document.activeElement.tagName === 'TEXTAREA') {
+          e.preventDefault();
+          document.activeElement.blur();
+        }
+      }
+    });
 
     addBtn.addEventListener('click', createNoteData);
 
