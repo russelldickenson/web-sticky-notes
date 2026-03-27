@@ -5,13 +5,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sticky Notes</title>
-  <!-- Favicon with Doubled Curled Corner and 1px Black Outline -->
   <link rel="icon" type="image/svg+xml"
     href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 448 512'%3E%3Cpath fill='%23facc15' stroke='black' stroke-width='15' d='M64 32C28.7 32 0 60.7 0 96V416c0 35.3 28.7 64 64 64H192l256-256V96c0-35.3-28.7-64-64-64H64z'/%3E%3Cpath fill='%23fde047' stroke='black' stroke-width='10' d='M192 480l256-256H224c-17.6 0-32 14.4-32 32v224z'/%3E%3C/svg%3E">
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script>
-    // Configure Tailwind to use 'dark' class for dark mode
     tailwind.config = {
       darkMode: 'class',
     }
@@ -25,27 +23,26 @@
       transition: background-color 0.3s ease;
     }
 
-    /* Note Styles - Light Mode */
+    /* Note Styles with Darker Shadows */
     .note {
       position: absolute;
       display: flex;
       flex-direction: column;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      box-shadow: 0 4px 10px -1px rgba(0, 0, 0, 0.25), 0 2px 6px -1px rgba(0, 0, 0, 0.15);
       border-radius: 0.375rem;
-      overflow: hidden;
-      transition: box-shadow 0.2s, transform 0.1s;
       width: 200px;
       min-height: 150px;
+      background-color: #fef08a;
+      overflow: visible !important;
     }
 
     .note:hover {
-      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-      z-index: 10;
+      box-shadow: 0 15px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.2);
+      z-index: 50 !important;
     }
 
     .note-header {
       background-color: #fde047;
-      /* Yellow-300 */
       height: 2rem;
       cursor: grab;
       display: flex;
@@ -53,16 +50,19 @@
       justify-content: flex-end;
       padding: 0 0.5rem;
       flex-shrink: 0;
+      border-top-left-radius: 0.375rem;
+      border-top-right-radius: 0.375rem;
     }
 
     .note-body {
-      background-color: #fef08a;
-      /* Yellow-200 */
       flex-grow: 1;
       padding: 1rem;
       position: relative;
       display: flex;
       flex-direction: column;
+      border-bottom-left-radius: 0.375rem;
+      border-bottom-right-radius: 0.375rem;
+      overflow: hidden;
     }
 
     .note-textarea {
@@ -76,29 +76,24 @@
       font-size: 1rem;
       line-height: 1.5;
       color: #374151;
-      overflow: auto;
-    }
-
-    /* Dark Mode Note Overrides - Muted Yellow */
-    .dark .note {
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
     }
 
     .dark .note-header {
       background-color: #71710a;
-      /* Muted olive-yellow header */
     }
 
     .dark .note-body {
       background-color: #424206;
-      /* Deep muted yellow-gray body */
     }
 
     .dark .note-textarea {
       color: #fef9c3;
     }
 
-    /* Delete Button */
+    .dark .note {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+    }
+
     .delete-btn {
       opacity: 0;
       transition: opacity 0.2s ease-in-out;
@@ -123,7 +118,6 @@
       opacity: 1;
     }
 
-    /* Resize Handle */
     .resize-handle {
       position: absolute;
       bottom: 0;
@@ -132,17 +126,6 @@
       height: 16px;
       cursor: nwse-resize;
       background: linear-gradient(135deg, transparent 50%, rgba(0, 0, 0, 0.1) 50%);
-      border-bottom-right-radius: 0.375rem;
-      z-index: 20;
-    }
-
-    .dark .resize-handle {
-      background: linear-gradient(135deg, transparent 50%, rgba(255, 255, 255, 0.1) 50%);
-    }
-
-    #modal-overlay {
-      background-color: rgba(0, 0, 0, 0.5);
-      backdrop-filter: blur(2px);
     }
 
     #canvas {
@@ -151,20 +134,69 @@
       position: relative;
       overflow: auto;
     }
+
+    /* Tooltip Style */
+    .tooltip-text {
+      opacity: 0;
+      visibility: hidden;
+      position: absolute;
+      top: 115%;
+      white-space: nowrap;
+      background-color: rgba(0, 0, 0, 0.85);
+      color: white;
+      backdrop-filter: blur(4px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 0px;
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: 500;
+      z-index: 10000;
+      pointer-events: none;
+      transition: opacity 0.1s ease-in, visibility 0.1s;
+      transition-delay: 0s;
+    }
+
+    .group:hover .tooltip-text {
+      opacity: 1;
+      visibility: visible;
+      transition-delay: 1s;
+    }
+
+    .tooltip-center {
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .tooltip-left {
+      left: 0;
+      transform: translateX(0);
+    }
+
+    .tooltip-right {
+      right: 0;
+      transform: translateX(0);
+    }
+
+    .dark .tooltip-text {
+      background-color: rgba(255, 255, 255, 0.95);
+      color: black;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+    }
   </style>
 </head>
 
 <body class="h-screen flex flex-col bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
 
-  <!-- Header -->
   <header
-    class="h-16 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-6 shadow-sm z-50 relative">
-    <div class="flex items-center gap-2">
-      <!-- Theme Toggle -->
-      <button id="theme-toggle" title="Toggle theme"
-        class="w-10 h-10 flex items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-[4px] transition-colors">
-        <i id="theme-icon" class="fa-solid fa-moon text-lg"></i>
-      </button>
+    class="h-16 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-6 shadow-sm z-[100] relative !overflow-visible">
+    <div class="flex items-center gap-2 !overflow-visible">
+      <div class="group relative !overflow-visible">
+        <button id="theme-toggle"
+          class="w-10 h-10 flex items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
+          <i id="theme-icon" class="fa-solid fa-moon text-lg"></i>
+        </button>
+        <span class="tooltip-text tooltip-left">Toggle theme</span>
+      </div>
     </div>
 
     <div class="flex flex-col items-center absolute left-1/2 -translate-x-1/2">
@@ -174,52 +206,43 @@
       </div>
       <span id="board-name"
         class="text-[10px] uppercase tracking-widest text-gray-400 dark:text-gray-500 font-semibold">Default
-        Board</span>
+        board</span>
     </div>
 
-    <!-- Updated Ghost Pill Button: Border increased to 2px (border-2) -->
-    <button id="add-note-btn" title="New Note (Cmd/Ctrl + .)"
-      class="flex items-center justify-center w-10 h-10 text-yellow-500 dark:text-yellow-400 border-2 border-yellow-400 dark:border-yellow-600 rounded-full hover:bg-yellow-400 hover:text-white dark:hover:bg-yellow-600 dark:hover:text-yellow-100 transition-all duration-200 shadow-sm active:scale-95">
-      <i class="fa-solid fa-plus text-sm"></i>
-    </button>
+    <div class="group relative !overflow-visible">
+      <button id="add-note-btn"
+        class="flex items-center justify-center w-10 h-10 bg-yellow-400 dark:bg-yellow-500 text-white rounded-lg shadow-sm transition-all duration-200 hover:shadow-lg hover:bg-yellow-500 dark:hover:bg-yellow-400 active:scale-95">
+        <i class="fa-solid fa-plus text-xl font-black"></i>
+      </button>
+      <span class="tooltip-text tooltip-right">Add new note (Cmd/Ctrl + .)</span>
+    </div>
   </header>
 
-  <!-- Canvas -->
-  <main id="canvas">
-    <!-- Notes will be injected here -->
-  </main>
+  <main id="canvas"></main>
 
-  <!-- Delete Confirmation Modal -->
-  <div id="modal-overlay" class="fixed inset-0 hidden items-center justify-center z-[100]">
-    <div
-      class="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-80 transform transition-all scale-100 border border-transparent dark:border-gray-700">
+  <div id="modal-overlay" class="fixed inset-0 hidden items-center justify-center z-[200]">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-80 border border-transparent dark:border-gray-700">
       <div class="flex items-center gap-3 mb-4 text-red-500">
         <i class="fa-solid fa-triangle-exclamation text-xl"></i>
-        <h3 class="text-lg font-bold text-gray-900 dark:text-white">Delete Note?</h3>
+        <h3 class="text-base font-bold text-gray-900 dark:text-white">Delete note?</h3>
       </div>
       <p class="text-gray-600 dark:text-gray-400 mb-6">Are you sure you want to delete this sticky note? This action
         cannot be undone.</p>
       <div class="flex justify-end gap-3">
         <button id="cancel-delete"
-          class="px-4 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-md transition-colors">
-          Cancel
-        </button>
+          class="px-4 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-md transition-colors">Cancel</button>
         <button id="confirm-delete"
-          class="px-4 py-2 text-white bg-red-500 hover:bg-red-600 rounded-md transition-colors shadow-sm">
-          Delete
-        </button>
+          class="px-4 py-2 text-white bg-red-500 hover:bg-red-600 rounded-md transition-colors shadow-sm">Delete</button>
       </div>
     </div>
   </div>
 
   <script>
-    // --- Multi-Board & Theme Logic ---
     const urlParams = new URLSearchParams(window.location.search);
     const boardId = urlParams.get('board') || 'default';
     const STORAGE_KEY = `stickyNotes_${boardId}`;
     const THEME_KEY = 'stickyNotes_theme';
 
-    // --- Theme Management ---
     const themeToggle = document.getElementById('theme-toggle');
     const themeIcon = document.getElementById('theme-icon');
 
@@ -234,210 +257,123 @@
       localStorage.setItem(THEME_KEY, theme);
     }
 
-    // Init Theme
-    const savedTheme = localStorage.getItem(THEME_KEY) || 'light';
-    applyTheme(savedTheme);
+    applyTheme(localStorage.getItem(THEME_KEY) || 'light');
+    themeToggle.addEventListener('click', () => applyTheme(document.documentElement.classList.contains('dark') ? 'light' : 'dark'));
 
-    themeToggle.addEventListener('click', () => {
-      const isDark = document.documentElement.classList.contains('dark');
-      applyTheme(isDark ? 'light' : 'dark');
-    });
+    document.getElementById('board-name').textContent = `${boardId} board`;
 
-    // Board UI
-    document.getElementById('board-name').textContent = `${boardId} Board`;
-
-    // --- State Management ---
     let notes = [];
     let noteToDeleteId = null;
     let highestZIndex = 10;
 
     const storedNotes = localStorage.getItem(STORAGE_KEY);
     if (storedNotes) {
-      try {
-        notes = JSON.parse(storedNotes);
-        notes.forEach(n => {
-          if (n.zIndex > highestZIndex) highestZIndex = n.zIndex;
-        });
-      } catch (e) {
-        console.error("Failed to parse notes", e);
-        notes = [];
-      }
+      notes = JSON.parse(storedNotes);
+      notes.forEach(n => { if (n.zIndex > highestZIndex) highestZIndex = n.zIndex; });
     }
 
     const canvas = document.getElementById('canvas');
     const addBtn = document.getElementById('add-note-btn');
     const modalOverlay = document.getElementById('modal-overlay');
-    const cancelDeleteBtn = document.getElementById('cancel-delete');
-    const confirmDeleteBtn = document.getElementById('confirm-delete');
 
     function renderNotes() {
       canvas.innerHTML = '';
-      notes.forEach(note => createNoteElement(note));
-    }
-
-    renderNotes();
-
-    function generateId() {
-      return Date.now().toString(36) + Math.random().toString(36).substr(2);
+      notes.forEach(createNoteElement);
     }
 
     function createNoteData() {
-      const x = 50 + (Math.random() * 100);
-      const y = 50 + (Math.random() * 100);
-
       const newNote = {
-        id: generateId(),
+        id: Date.now().toString(36),
         content: '',
-        x: x,
-        y: y,
+        x: 50 + Math.random() * 100,
+        y: 50 + Math.random() * 100,
         width: 250,
         height: 250,
         zIndex: ++highestZIndex
       };
       notes.push(newNote);
       saveNotes();
-      const el = createNoteElement(newNote);
-      const textarea = el.querySelector('textarea');
-      if (textarea) textarea.focus();
+      createNoteElement(newNote).querySelector('textarea').focus();
     }
 
-    function saveNotes() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(notes));
-    }
-
-    function updateNote(id, updates) {
-      const noteIndex = notes.findIndex(n => n.id === id);
-      if (noteIndex !== -1) {
-        notes[noteIndex] = { ...notes[noteIndex], ...updates };
-        saveNotes();
-      }
-    }
-
-    function deleteNote(id) {
-      notes = notes.filter(n => n.id !== id);
-      saveNotes();
-      const el = document.getElementById(id);
-      if (el) el.remove();
-    }
-
-    function bringToFront(id) {
-      const note = notes.find(n => n.id === id);
-      if (note && note.zIndex !== highestZIndex) {
-        highestZIndex++;
-        note.zIndex = highestZIndex;
-        const el = document.getElementById(id);
-        if (el) el.style.zIndex = highestZIndex;
-        saveNotes();
-      }
-    }
+    function saveNotes() { localStorage.setItem(STORAGE_KEY, JSON.stringify(notes)); }
 
     function createNoteElement(noteData) {
       const noteEl = document.createElement('div');
-      noteEl.classList.add('note');
+      noteEl.className = 'note';
       noteEl.id = noteData.id;
-
-      noteEl.style.left = `${noteData.x}px`;
-      noteEl.style.top = `${noteData.y}px`;
-      noteEl.style.width = `${noteData.width}px`;
-      noteEl.style.height = `${noteData.height || 250}px`;
-      noteEl.style.zIndex = noteData.zIndex;
+      noteEl.style.cssText = `left:${noteData.x}px; top:${noteData.y}px; width:${noteData.width}px; height:${noteData.height}px; z-index:${noteData.zIndex}`;
 
       noteEl.innerHTML = `
-                <div class="note-header">
-                    <button class="delete-btn" title="Delete note">
-                        <i class="fa-solid fa-trash-can"></i>
-                    </button>
-                </div>
-                <div class="note-body">
-                    <textarea class="note-textarea" placeholder="Type your note here...">${noteData.content}</textarea>
-                    <div class="resize-handle"></div>
-                </div>
-            `;
+        <div class="note-header">
+          <div class="group relative">
+            <button class="delete-btn">
+              <i class="fa-solid fa-trash-can"></i>
+            </button>
+            <span class="tooltip-text tooltip-center">Delete note</span>
+          </div>
+        </div>
+        <div class="note-body">
+          <textarea class="note-textarea" placeholder="Type your note here...">${noteData.content}</textarea>
+          <div class="resize-handle"></div>
+        </div>`;
 
-      const textarea = noteEl.querySelector('textarea');
-      textarea.addEventListener('input', (e) => {
-        updateNote(noteData.id, { content: e.target.value });
-      });
+      noteEl.querySelector('textarea').oninput = (e) => {
+        const note = notes.find(n => n.id === noteData.id);
+        note.content = e.target.value;
+        saveNotes();
+      };
 
-      noteEl.addEventListener('mousedown', () => {
-        bringToFront(noteData.id);
-      });
+      noteEl.onmousedown = () => {
+        highestZIndex++;
+        noteEl.style.zIndex = highestZIndex;
+        notes.find(n => n.id === noteData.id).zIndex = highestZIndex;
+        saveNotes();
+      };
 
-      const deleteBtn = noteEl.querySelector('.delete-btn');
-      deleteBtn.addEventListener('mousedown', (e) => e.stopPropagation());
-      deleteBtn.addEventListener('click', (e) => {
+      noteEl.querySelector('.delete-btn').onclick = (e) => {
         e.stopPropagation();
         noteToDeleteId = noteData.id;
-        modalOverlay.classList.remove('hidden');
-        modalOverlay.classList.add('flex');
-      });
+        modalOverlay.classList.replace('hidden', 'flex');
+      };
 
       const header = noteEl.querySelector('.note-header');
-      header.addEventListener('mousedown', (e) => {
+      header.onmousedown = (e) => {
         if (e.target.closest('.delete-btn')) return;
-        e.preventDefault();
-
-        let startX = e.clientX;
-        let startY = e.clientY;
-        let startLeft = noteEl.offsetLeft;
-        let startTop = noteEl.offsetTop;
-
-        const onMouseMove = (moveEvent) => {
-          const dx = moveEvent.clientX - startX;
-          const dy = moveEvent.clientY - startY;
-          noteEl.style.left = `${startLeft + dx}px`;
-          noteEl.style.top = `${startTop + dy}px`;
+        const startX = e.clientX - noteEl.offsetLeft;
+        const startY = e.clientY - noteEl.offsetTop;
+        document.onmousemove = (me) => {
+          noteEl.style.left = `${me.clientX - startX}px`;
+          noteEl.style.top = `${me.clientY - startY}px`;
         };
-
-        const onMouseUp = () => {
-          document.removeEventListener('mousemove', onMouseMove);
-          document.removeEventListener('mouseup', onMouseUp);
-          updateNote(noteData.id, {
-            x: parseInt(noteEl.style.left),
-            y: parseInt(noteEl.style.top)
-          });
+        document.onmouseup = () => {
+          document.onmousemove = null;
+          const note = notes.find(n => n.id === noteData.id);
+          note.x = parseInt(noteEl.style.left);
+          note.y = parseInt(noteEl.style.top);
+          saveNotes();
         };
-
-        document.addEventListener('mousemove', onMouseMove);
-        document.addEventListener('mouseup', onMouseUp);
-      });
+      };
 
       const resizer = noteEl.querySelector('.resize-handle');
-      resizer.addEventListener('mousedown', (e) => {
-        e.preventDefault();
+      resizer.onmousedown = (e) => {
         e.stopPropagation();
-
-        let startX = e.clientX;
-        let startY = e.clientY;
-        let startWidth = parseInt(document.defaultView.getComputedStyle(noteEl).width, 10);
-        let startHeight = parseInt(document.defaultView.getComputedStyle(noteEl).height, 10);
-
-        const onMouseMove = (moveEvent) => {
-          const dx = moveEvent.clientX - startX;
-          const dy = moveEvent.clientY - startY;
-
-          let newWidth = startWidth + dx;
-          let newHeight = startHeight + dy;
-
-          if (newWidth < 150) newWidth = 150;
-          if (newHeight < 150) newHeight = 150;
-
-          noteEl.style.width = `${newWidth}px`;
-          noteEl.style.height = `${newHeight}px`;
+        const startW = noteEl.offsetWidth;
+        const startH = noteEl.offsetHeight;
+        const startX = e.clientX;
+        const startY = e.clientY;
+        document.onmousemove = (me) => {
+          noteEl.style.width = `${Math.max(150, startW + me.clientX - startX)}px`;
+          noteEl.style.height = `${Math.max(150, startH + me.clientY - startY)}px`;
         };
-
-        const onMouseUp = () => {
-          document.removeEventListener('mousemove', onMouseMove);
-          document.removeEventListener('mouseup', onMouseUp);
-          updateNote(noteData.id, {
-            width: parseInt(noteEl.style.width),
-            height: parseInt(noteEl.style.height)
-          });
+        document.onmouseup = () => {
+          document.onmousemove = null;
+          const note = notes.find(n => n.id === noteData.id);
+          note.width = noteEl.offsetWidth;
+          note.height = noteEl.offsetHeight;
+          saveNotes();
         };
-
-        document.addEventListener('mousemove', onMouseMove);
-        document.addEventListener('mouseup', onMouseUp);
-      });
+      };
 
       canvas.appendChild(noteEl);
       return noteEl;
@@ -460,26 +396,17 @@
       }
     });
 
-    addBtn.addEventListener('click', createNoteData);
-
-    const closeModal = () => {
-      modalOverlay.classList.add('hidden');
-      modalOverlay.classList.remove('flex');
-      noteToDeleteId = null;
+    addBtn.onclick = createNoteData;
+    document.getElementById('cancel-delete').onclick = () => modalOverlay.classList.replace('flex', 'hidden');
+    document.getElementById('confirm-delete').onclick = () => {
+      notes = notes.filter(n => n.id !== noteToDeleteId);
+      const el = document.getElementById(noteToDeleteId);
+      if (el) el.remove();
+      saveNotes();
+      modalOverlay.classList.replace('flex', 'hidden');
     };
 
-    cancelDeleteBtn.addEventListener('click', closeModal);
-    modalOverlay.addEventListener('click', (e) => {
-      if (e.target === modalOverlay) closeModal();
-    });
-
-    confirmDeleteBtn.addEventListener('click', () => {
-      if (noteToDeleteId) {
-        deleteNote(noteToDeleteId);
-        closeModal();
-      }
-    });
-
+    renderNotes();
   </script>
 </body>
 
