@@ -276,6 +276,19 @@
     const addBtn = document.getElementById('add-note-btn');
     const modalOverlay = document.getElementById('modal-overlay');
 
+    // Debounce function to limit frequent localStorage writes on input
+    function debounce(func, wait) {
+      let timeout;
+      return function executedFunction(...args) {
+        const later = () => {
+          clearTimeout(timeout);
+          func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+      };
+    }
+
     function renderNotes() {
       canvas.innerHTML = '';
       notes.forEach(createNoteElement);
@@ -296,7 +309,11 @@
       createNoteElement(newNote).querySelector('textarea').focus();
     }
 
-    function saveNotes() { localStorage.setItem(STORAGE_KEY, JSON.stringify(notes)); }
+    function saveNotes() { 
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(notes)); 
+    }
+
+    const debouncedSaveNotes = debounce(saveNotes, 300);
 
     function createNoteElement(noteData) {
       const noteEl = document.createElement('div');
@@ -304,6 +321,8 @@
       noteEl.id = noteData.id;
       noteEl.style.cssText = `left:${noteData.x}px; top:${noteData.y}px; width:${noteData.width}px; height:${noteData.height}px; z-index:${noteData.zIndex}`;
 
+      // XSS Protection: We do NOT interpolate noteData.content inside HTML strings.
+      // Instead, we set the textarea value programmatically below.
       noteEl.innerHTML = `
         <div class="note-header">
           <div class="group relative">
@@ -314,21 +333,29 @@
           </div>
         </div>
         <div class="note-body">
-          <textarea class="note-textarea" placeholder="Type your note here...">${noteData.content}</textarea>
+          <textarea class="note-textarea" placeholder="Type your note here..."></textarea>
           <div class="resize-handle"></div>
         </div>`;
 
-      noteEl.querySelector('textarea').oninput = (e) => {
+      const textarea = noteEl.querySelector('.note-textarea');
+      textarea.value = noteData.content;
+
+      textarea.oninput = (e) => {
         const note = notes.find(n => n.id === noteData.id);
-        note.content = e.target.value;
-        saveNotes();
+        if (note) {
+          note.content = e.target.value;
+          debouncedSaveNotes();
+        }
       };
 
       noteEl.onmousedown = () => {
         highestZIndex++;
         noteEl.style.zIndex = highestZIndex;
-        notes.find(n => n.id === noteData.id).zIndex = highestZIndex;
-        saveNotes();
+        const note = notes.find(n => n.id === noteData.id);
+        if (note) {
+          note.zIndex = highestZIndex;
+          saveNotes();
+        }
       };
 
       noteEl.querySelector('.delete-btn').onclick = (e) => {
@@ -337,43 +364,83 @@
         modalOverlay.classList.replace('hidden', 'flex');
       };
 
+      // Dragging using document level addEventListener/removeEventListener to prevent overwriting
       const header = noteEl.querySelector('.note-header');
-      header.onmousedown = (e) => {
+      header.addEventListener('mousedown', (e) => {
         if (e.target.closest('.delete-btn')) return;
         const startX = e.clientX - noteEl.offsetLeft;
         const startY = e.clientY - noteEl.offsetTop;
-        document.onmousemove = (me) => {
-          noteEl.style.left = `${me.clientX - startX}px`;
-          noteEl.style.top = `${me.clientY - startY}px`;
-        };
-        document.onmouseup = () => {
-          document.onmousemove = null;
-          const note = notes.find(n => n.id === noteData.id);
-          note.x = parseInt(noteEl.style.left);
-          note.y = parseInt(noteEl.style.top);
-          saveNotes();
-        };
-      };
 
+        // Capture boundaries at the start of the drag to prevent dynamic expansion as the note moves
+        const maxX = Math.max(canvas.clientWidth, canvas.scrollWidth) - noteEl.offsetWidth;
+        const maxY = Math.max(canvas.clientHeight, canvas.scrollHeight) - noteEl.offsetHeight;
+
+        const onMouseMove = (me) => {
+          let newX = me.clientX - startX;
+          let newY = me.clientY - startY;
+
+          // Boundary checks: keep the notes on the canvas viewport space
+          newX = Math.max(0, Math.min(newX, maxX));
+          newY = Math.max(0, Math.min(newY, maxY));
+
+          noteEl.style.left = `${newX}px`;
+          noteEl.style.top = `${newY}px`;
+        };
+
+        const onMouseUp = () => {
+          document.removeEventListener('mousemove', onMouseMove);
+          document.removeEventListener('mouseup', onMouseUp);
+          const note = notes.find(n => n.id === noteData.id);
+          if (note) {
+            note.x = parseInt(noteEl.style.left);
+            note.y = parseInt(noteEl.style.top);
+            saveNotes();
+          }
+        };
+
+        document.addEventListener('mousemove', onMouseMove);
+        document.addEventListener('mouseup', onMouseUp);
+      });
+
+      // Resizing using document level addEventListener/removeEventListener to prevent overwriting
       const resizer = noteEl.querySelector('.resize-handle');
-      resizer.onmousedown = (e) => {
+      resizer.addEventListener('mousedown', (e) => {
         e.stopPropagation();
         const startW = noteEl.offsetWidth;
         const startH = noteEl.offsetHeight;
         const startX = e.clientX;
         const startY = e.clientY;
-        document.onmousemove = (me) => {
-          noteEl.style.width = `${Math.max(150, startW + me.clientX - startX)}px`;
-          noteEl.style.height = `${Math.max(150, startH + me.clientY - startY)}px`;
+
+        // Capture boundaries at the start of the resize to prevent dynamic expansion as the note grows
+        const maxX = Math.max(canvas.clientWidth, canvas.scrollWidth) - noteEl.offsetLeft;
+        const maxY = Math.max(canvas.clientHeight, canvas.scrollHeight) - noteEl.offsetTop;
+
+        const onMouseMove = (me) => {
+          let newW = startW + me.clientX - startX;
+          let newH = startH + me.clientY - startY;
+
+          // Boundary checks: don't resize notes past the canvas boundary
+          newW = Math.max(150, Math.min(newW, maxX));
+          newH = Math.max(150, Math.min(newH, maxY));
+
+          noteEl.style.width = `${newW}px`;
+          noteEl.style.height = `${newH}px`;
         };
-        document.onmouseup = () => {
-          document.onmousemove = null;
+
+        const onMouseUp = () => {
+          document.removeEventListener('mousemove', onMouseMove);
+          document.removeEventListener('mouseup', onMouseUp);
           const note = notes.find(n => n.id === noteData.id);
-          note.width = noteEl.offsetWidth;
-          note.height = noteEl.offsetHeight;
-          saveNotes();
+          if (note) {
+            note.width = noteEl.offsetWidth;
+            note.height = noteEl.offsetHeight;
+            saveNotes();
+          }
         };
-      };
+
+        document.addEventListener('mousemove', onMouseMove);
+        document.addEventListener('mouseup', onMouseUp);
+      });
 
       canvas.appendChild(noteEl);
       return noteEl;
