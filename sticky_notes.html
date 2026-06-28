@@ -67,9 +67,9 @@
       transition: background-color 0.3s ease, box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    .note:hover {
+    .note.selected {
       box-shadow: 0 15px 25px -5px var(--shadow-hover-color), 0 8px 10px -6px rgba(0, 0, 0, 0.2);
-      z-index: 50 !important;
+      z-index: calc(var(--note-z, 0) + 10000) !important;
     }
 
     .note-header {
@@ -134,7 +134,7 @@
       background: var(--delete-btn-hover);
     }
 
-    .note:hover .delete-btn {
+    .note.selected .delete-btn {
       opacity: 1;
     }
 
@@ -232,6 +232,27 @@
     .dark #add-note-btn:hover {
       filter: brightness(1.1);
     }
+
+    /* Grid background style when enabled */
+    #canvas.grid-bg {
+      background-size: 20px 20px;
+      background-image: 
+        linear-gradient(to right, rgba(156, 163, 175, 0.08) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(156, 163, 175, 0.08) 1px, transparent 1px);
+    }
+    .dark #canvas.grid-bg {
+      background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    }
+
+    /* Grid Toggle active icon color */
+    #grid-toggle.active {
+      color: #eab308; /* yellow-500 */
+    }
+    .dark #grid-toggle.active {
+      color: #fef08a; /* yellow-200 */
+    }
   </style>
 </head>
 
@@ -246,6 +267,13 @@
           <i id="theme-icon" class="fa-solid fa-moon text-lg"></i>
         </button>
         <span class="tooltip-text tooltip-left">Toggle theme</span>
+      </div>
+      <div class="group relative !overflow-visible">
+        <button id="grid-toggle"
+          class="w-10 h-10 flex items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
+          <i id="grid-icon" class="fa-solid fa-table-cells text-lg"></i>
+        </button>
+        <span class="tooltip-text tooltip-left">Toggle grid snap</span>
       </div>
     </div>
 
@@ -326,6 +354,52 @@
     const addBtn = document.getElementById('add-note-btn');
     const modalOverlay = document.getElementById('modal-overlay');
 
+    // Grid Snapping Config & State
+    const GRID_KEY = 'stickyNotes_gridSnap';
+    const GRID_SIZE = 20;
+    const gridToggle = document.getElementById('grid-toggle');
+    let gridSnapActive = localStorage.getItem(GRID_KEY) === 'true';
+
+    function snap(val) {
+      if (!gridSnapActive) return val;
+      return Math.round(val / GRID_SIZE) * GRID_SIZE;
+    }
+
+    function applyGridSnap(active) {
+      gridSnapActive = active;
+      localStorage.setItem(GRID_KEY, active);
+      if (active) {
+        gridToggle.classList.add('active');
+        canvas.classList.add('grid-bg');
+      } else {
+        gridToggle.classList.remove('active');
+        canvas.classList.remove('grid-bg');
+      }
+    }
+
+    applyGridSnap(gridSnapActive);
+
+    gridToggle.addEventListener('click', () => {
+      applyGridSnap(!gridSnapActive);
+      if (gridSnapActive) {
+        // Snap all existing notes to the grid
+        notes.forEach(note => {
+          note.x = snap(note.x);
+          note.y = snap(note.y);
+          note.width = snap(note.width);
+          note.height = snap(note.height);
+          const el = document.getElementById(note.id);
+          if (el) {
+            el.style.left = `${note.x}px`;
+            el.style.top = `${note.y}px`;
+            el.style.width = `${note.width}px`;
+            el.style.height = `${note.height}px`;
+          }
+        });
+        saveNotes();
+      }
+    });
+
     // Debounce function to limit frequent localStorage writes on input
     function debounce(func, wait) {
       let timeout;
@@ -344,19 +418,34 @@
       notes.forEach(createNoteElement);
     }
 
+    function selectNote(noteEl) {
+      canvas.querySelectorAll('.note.selected').forEach(n => n.classList.remove('selected'));
+      noteEl.classList.add('selected');
+      highestZIndex++;
+      noteEl.style.zIndex = highestZIndex;
+      noteEl.style.setProperty('--note-z', highestZIndex);
+      const note = notes.find(n => n.id === noteEl.id);
+      if (note) {
+        note.zIndex = highestZIndex;
+        saveNotes();
+      }
+    }
+
     function createNoteData() {
       const newNote = {
         id: Date.now().toString(36),
         content: '',
-        x: 50 + Math.random() * 100,
-        y: 50 + Math.random() * 100,
-        width: 250,
-        height: 250,
+        x: snap(50 + Math.random() * 100),
+        y: snap(50 + Math.random() * 100),
+        width: snap(250),
+        height: snap(250),
         zIndex: ++highestZIndex
       };
       notes.push(newNote);
       saveNotes();
-      createNoteElement(newNote).querySelector('textarea').focus();
+      const noteEl = createNoteElement(newNote);
+      selectNote(noteEl);
+      noteEl.querySelector('textarea').focus();
     }
 
     function saveNotes() { 
@@ -369,7 +458,7 @@
       const noteEl = document.createElement('div');
       noteEl.className = 'note';
       noteEl.id = noteData.id;
-      noteEl.style.cssText = `left:${noteData.x}px; top:${noteData.y}px; width:${noteData.width}px; height:${noteData.height}px; z-index:${noteData.zIndex}`;
+      noteEl.style.cssText = `left:${noteData.x}px; top:${noteData.y}px; width:${noteData.width}px; height:${noteData.height}px; z-index:${noteData.zIndex}; --note-z:${noteData.zIndex}`;
 
       // XSS Protection: We do NOT interpolate noteData.content inside HTML strings.
       // Instead, we set the textarea value programmatically below.
@@ -398,15 +487,7 @@
         }
       };
 
-      noteEl.onmousedown = () => {
-        highestZIndex++;
-        noteEl.style.zIndex = highestZIndex;
-        const note = notes.find(n => n.id === noteData.id);
-        if (note) {
-          note.zIndex = highestZIndex;
-          saveNotes();
-        }
-      };
+      noteEl.onmousedown = () => selectNote(noteEl);
 
       noteEl.querySelector('.delete-btn').onclick = (e) => {
         e.stopPropagation();
@@ -432,6 +513,10 @@
         const onMouseMove = (me) => {
           let newX = me.clientX - startX;
           let newY = me.clientY - startY;
+
+          // Apply snap dynamically if active
+          newX = snap(newX);
+          newY = snap(newY);
 
           // Boundary checks: keep the notes on the canvas viewport space
           newX = Math.max(0, Math.min(newX, maxX));
@@ -461,6 +546,7 @@
       const resizer = noteEl.querySelector('.resize-handle');
       resizer.addEventListener('mousedown', (e) => {
         e.stopPropagation();
+        selectNote(noteEl);
         const startW = noteEl.offsetWidth;
         const startH = noteEl.offsetHeight;
         const startX = e.clientX;
@@ -473,6 +559,10 @@
         const onMouseMove = (me) => {
           let newW = startW + me.clientX - startX;
           let newH = startH + me.clientY - startY;
+
+          // Apply snap dynamically if active
+          newW = snap(newW);
+          newH = snap(newH);
 
           // Boundary checks: don't resize notes past the canvas boundary
           newW = Math.max(150, Math.min(newW, maxX));
@@ -515,6 +605,12 @@
           e.preventDefault();
           document.activeElement.blur();
         }
+      }
+    });
+
+    canvas.addEventListener('mousedown', (e) => {
+      if (e.target === canvas) {
+        canvas.querySelectorAll('.note.selected').forEach(n => n.classList.remove('selected'));
       }
     });
 
