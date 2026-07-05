@@ -30,6 +30,15 @@
       --scroll-thumb: rgba(156, 163, 175, 0.5);
       --shadow-color: rgba(0, 0, 0, 0.15);
       --shadow-hover-color: rgba(0, 0, 0, 0.25);
+      --text-dim: rgba(0,0,0,0.8);
+      --border: rgba(0,0,0,0.1);
+      --btn-bg: rgba(0,0,0,0.06);
+      --btn-border: rgba(0,0,0,0.12);
+      --btn-hover: rgba(0,0,0,0.1);
+      --accent: #4a6fa5;
+      --accent-hover: #3d5d8a;
+      --shadow: rgba(0,0,0,0.08);
+      --shadow-lg: rgba(0,0,0,0.12);
     }
 
     .dark {
@@ -45,6 +54,15 @@
       --scroll-thumb: rgba(75, 85, 99, 0.5);
       --shadow-color: rgba(0, 0, 0, 0.4);
       --shadow-hover-color: rgba(0, 0, 0, 0.6);
+      --text-dim: rgba(255,255,255,0.5);
+      --border: rgba(255,255,255,0.1);
+      --btn-bg: rgba(255,255,255,0.08);
+      --btn-border: rgba(255,255,255,0.15);
+      --btn-hover: rgba(255,255,255,0.15);
+      --accent: #e94560;
+      --accent-hover: #c73a52;
+      --shadow: rgba(0,0,0,0.3);
+      --shadow-lg: rgba(0,0,0,0.4);
     }
 
     body {
@@ -84,6 +102,7 @@
       border-top-left-radius: 0.375rem;
       border-top-right-radius: 0.375rem;
       transition: background-color 0.3s ease;
+      touch-action: none; /* Prevents mobile scrolling when dragging notes */
     }
 
     .note-header.dragging {
@@ -147,6 +166,7 @@
       cursor: nwse-resize;
       background: linear-gradient(135deg, transparent 50%, rgba(0, 0, 0, 0.15) 50%);
       transition: background 0.2s ease;
+      touch-action: none; /* Prevents mobile scrolling when resizing notes */
     }
 
     .resize-handle:hover {
@@ -217,21 +237,59 @@
       transform: translateX(0);
     }
 
-    /* Add Note Button Theme Consistency */
+    /* Header Buttons */
+    .header-btn {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      background: var(--btn-bg);
+      border: 1px solid var(--btn-border);
+      color: var(--text-dim);
+      cursor: pointer;
+      box-shadow: 0 2px 8px var(--shadow);
+      transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+                  box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+                  background 0.2s ease,
+                  border-color 0.2s ease;
+    }
+
+    .header-btn:hover {
+      background: var(--btn-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px var(--shadow-lg);
+    }
+
+    #grid-toggle { opacity: 0.7; }
+    #grid-toggle.active { opacity: 1; color: var(--accent); }
+
     #add-note-btn {
-      background-color: var(--note-header-bg);
-      color: var(--note-text);
-      transition: background-color 0.3s ease, color 0.3s ease, transform 0.1s ease, box-shadow 0.2s ease;
+      background: var(--btn-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      color: var(--text-dim);
+      border-color: var(--border);
     }
-
     #add-note-btn:hover {
-      box-shadow: 0 4px 12px var(--shadow-color);
-      filter: brightness(0.95);
+      background: var(--btn-hover);
+      border-color: var(--text-dim);
+    }
+    #add-note-btn:active {
+      transform: translateY(1px) scale(0.98);
+    }
+    #add-note-btn svg {
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    #add-note-btn:hover svg {
+      transform: rotate(90deg);
     }
 
-    .dark #add-note-btn:hover {
-      filter: brightness(1.1);
-    }
+    .icon-sun,
+    .icon-moon { display: none; }
+    .dark .icon-sun { display: block; }
+    :root:not(.dark) .icon-moon { display: block; }
 
     /* Grid background style when enabled */
     #canvas.grid-bg {
@@ -246,13 +304,7 @@
         linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
     }
 
-    /* Grid Toggle active icon color */
-    #grid-toggle.active {
-      color: #eab308; /* yellow-500 */
-    }
-    .dark #grid-toggle.active {
-      color: #fef08a; /* yellow-200 */
-    }
+
   </style>
 </head>
 
@@ -260,23 +312,6 @@
 
   <header
     class="h-16 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-6 shadow-sm z-[100] relative !overflow-visible">
-    <div class="flex items-center gap-2 !overflow-visible">
-      <div class="group relative !overflow-visible">
-        <button id="theme-toggle"
-          class="w-10 h-10 flex items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
-          <i id="theme-icon" class="fa-solid fa-moon text-lg"></i>
-        </button>
-        <span class="tooltip-text tooltip-left">Toggle theme</span>
-      </div>
-      <div class="group relative !overflow-visible">
-        <button id="grid-toggle"
-          class="w-10 h-10 flex items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
-          <i id="grid-icon" class="fa-solid fa-table-cells text-lg"></i>
-        </button>
-        <span class="tooltip-text tooltip-left">Toggle grid snap</span>
-      </div>
-    </div>
-
     <div class="flex flex-col items-center absolute left-1/2 -translate-x-1/2">
       <div class="flex items-center gap-3">
         <i class="fa-solid fa-note-sticky text-yellow-400 text-2xl"></i>
@@ -287,12 +322,35 @@
         board</span>
     </div>
 
-    <div class="group relative !overflow-visible">
-      <button id="add-note-btn"
-        class="flex items-center justify-center w-10 h-10 rounded-lg shadow-sm active:scale-95">
-        <i class="fa-solid fa-plus text-xl font-black"></i>
-      </button>
-      <span class="tooltip-text tooltip-right">Add new note (Cmd/Ctrl + .)</span>
+    <div class="flex items-center gap-2 ml-auto !overflow-visible">
+      <div class="group relative !overflow-visible">
+        <button id="grid-toggle" class="header-btn" aria-label="Toggle grid snap">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+            <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
+          </svg>
+        </button>
+        <span class="tooltip-text tooltip-left">Toggle grid snap</span>
+      </div>
+      <div class="group relative !overflow-visible">
+        <button id="theme-toggle" class="header-btn" aria-label="Toggle theme">
+          <svg class="icon-sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+          <svg class="icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
+        <span class="tooltip-text tooltip-left">Toggle theme</span>
+      </div>
+      <div class="group relative !overflow-visible">
+        <button id="add-note-btn" class="header-btn" aria-label="Add new note">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+        </button>
+        <span class="tooltip-text tooltip-right">Add new note (Cmd/Ctrl + .)</span>
+      </div>
     </div>
   </header>
 
@@ -322,15 +380,12 @@
     const THEME_KEY = 'stickyNotes_theme';
 
     const themeToggle = document.getElementById('theme-toggle');
-    const themeIcon = document.getElementById('theme-icon');
 
     function applyTheme(theme) {
       if (theme === 'dark') {
         document.documentElement.classList.add('dark');
-        themeIcon.classList.replace('fa-moon', 'fa-sun');
       } else {
         document.documentElement.classList.remove('dark');
-        themeIcon.classList.replace('fa-sun', 'fa-moon');
       }
       localStorage.setItem(THEME_KEY, theme);
     }
@@ -487,7 +542,7 @@
         }
       };
 
-      noteEl.onmousedown = () => selectNote(noteEl);
+      noteEl.addEventListener('pointerdown', () => selectNote(noteEl));
 
       noteEl.querySelector('.delete-btn').onclick = (e) => {
         e.stopPropagation();
@@ -497,11 +552,13 @@
 
       // Dragging using document level addEventListener/removeEventListener to prevent overwriting
       const header = noteEl.querySelector('.note-header');
-      header.addEventListener('mousedown', (e) => {
+      header.addEventListener('pointerdown', (e) => {
         if (e.target.closest('.delete-btn')) return;
         
         // Add dragging class to show grabbing cursor
         header.classList.add('dragging');
+        
+        selectNote(noteEl);
         
         const startX = e.clientX - noteEl.offsetLeft;
         const startY = e.clientY - noteEl.offsetTop;
@@ -510,7 +567,7 @@
         const maxX = Math.max(canvas.clientWidth, canvas.scrollWidth) - noteEl.offsetWidth;
         const maxY = Math.max(canvas.clientHeight, canvas.scrollHeight) - noteEl.offsetHeight;
 
-        const onMouseMove = (me) => {
+        const onPointerMove = (me) => {
           let newX = me.clientX - startX;
           let newY = me.clientY - startY;
 
@@ -526,10 +583,10 @@
           noteEl.style.top = `${newY}px`;
         };
 
-        const onMouseUp = () => {
+        const onPointerUp = () => {
           header.classList.remove('dragging');
-          document.removeEventListener('mousemove', onMouseMove);
-          document.removeEventListener('mouseup', onMouseUp);
+          document.removeEventListener('pointermove', onPointerMove);
+          document.removeEventListener('pointerup', onPointerUp);
           const note = notes.find(n => n.id === noteData.id);
           if (note) {
             note.x = parseInt(noteEl.style.left);
@@ -538,13 +595,13 @@
           }
         };
 
-        document.addEventListener('mousemove', onMouseMove);
-        document.addEventListener('mouseup', onMouseUp);
+        document.addEventListener('pointermove', onPointerMove);
+        document.addEventListener('pointerup', onPointerUp);
       });
 
       // Resizing using document level addEventListener/removeEventListener to prevent overwriting
       const resizer = noteEl.querySelector('.resize-handle');
-      resizer.addEventListener('mousedown', (e) => {
+      resizer.addEventListener('pointerdown', (e) => {
         e.stopPropagation();
         selectNote(noteEl);
         const startW = noteEl.offsetWidth;
@@ -556,7 +613,7 @@
         const maxX = Math.max(canvas.clientWidth, canvas.scrollWidth) - noteEl.offsetLeft;
         const maxY = Math.max(canvas.clientHeight, canvas.scrollHeight) - noteEl.offsetTop;
 
-        const onMouseMove = (me) => {
+        const onPointerMove = (me) => {
           let newW = startW + me.clientX - startX;
           let newH = startH + me.clientY - startY;
 
@@ -572,9 +629,9 @@
           noteEl.style.height = `${newH}px`;
         };
 
-        const onMouseUp = () => {
-          document.removeEventListener('mousemove', onMouseMove);
-          document.removeEventListener('mouseup', onMouseUp);
+        const onPointerUp = () => {
+          document.removeEventListener('pointermove', onPointerMove);
+          document.removeEventListener('pointerup', onPointerUp);
           const note = notes.find(n => n.id === noteData.id);
           if (note) {
             note.width = noteEl.offsetWidth;
@@ -583,8 +640,8 @@
           }
         };
 
-        document.addEventListener('mousemove', onMouseMove);
-        document.addEventListener('mouseup', onMouseUp);
+        document.addEventListener('pointermove', onPointerMove);
+        document.addEventListener('pointerup', onPointerUp);
       });
 
       canvas.appendChild(noteEl);
@@ -608,7 +665,7 @@
       }
     });
 
-    canvas.addEventListener('mousedown', (e) => {
+    canvas.addEventListener('pointerdown', (e) => {
       if (e.target === canvas) {
         canvas.querySelectorAll('.note.selected').forEach(n => n.classList.remove('selected'));
       }
